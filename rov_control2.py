@@ -66,44 +66,61 @@ def showIf(boolean, ifTrue, ifFalse=" "):
         show(ifFalse)
 
 
-def FireThruster(thruster, throttle):
-    print ("Forward! ")
+def FireThrusterForward(thruster, throttle):
     thruster.setSpeed(throttle)
     thruster.run(Raspi_MotorHAT.FORWARD)
 
 
+def FireThrusterBackward(thruster, throttle):
+    thruster.setSpeed(throttle)
+    thruster.run(Raspi_MotorHAT.BACKWARD)
+
+
+#arguments(joystick object of xbox, thrusters1-4)
+def LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
+    AxisY = joy.leftY()
+    AxisX = joy.leftX()
+    if(AxisY > 0):
+        
+        FireThrusterForward(leftThruster, bounding(AxisY))
+        FireThrusterForward(rightThruster, bounding(AxisY))
+        
+    elif(AxisY < 0):
+        
+        FireThrusterBackward(leftThruster, bounding(AxisY))
+        FireThrusterBackward(rightThruster, bounding(AxisY))
+    
+    if(AxisX < 0): #stick is pushed left
+        
+        FireThrusterForward(rightThruster, bounding(AxisX))
+        FireThrusterBackward(leftThruster, bounding(AxisX))
+    
+    elif(AxisX > 0):#stick is pushed right
+        
+        FireThrusterForward(leftThruster, bounding(AxisX))
+        FireThrusterBackward(rightThruster, bounding(AxisX))
+        
 # Instantiate the controller
 joy = xbox.Joystick()
 
 # Show various axis and button states until Back button is pressed
-print("Xbox controller sample: Press Back button to exit")
+print("ROV control: Press [Back] button to exit")
+# Show connection status
+show("Connected:")
+showIf(joy.connected(), "Y", "N")
 while not joy.Back():
     # Show connection status
-    show("Connected:")
-    showIf(joy.connected(), "Y", "N")
+    #show("Connected:")
+    #showIf(joy.connected(), "Y", "N")
     # Left analog stick
-    show("  Left X/Y:", fmtFloat(joy.leftX()), "/", fmtFloat(joy.leftY()))
-    #joy.
+    #show("  Left X/Y:", fmtFloat(joy.leftX()), "/", fmtFloat(joy.leftY()))
+    LeftStickThruster(joy, ThrusterVerticalFront, ThrusterVerticalBack, ThrusterHorizontalLeft, ThrusterHorizontalRight)
     
     # Right trigger
-    show("  RightTrg:", fmtFloat(joy.rightTrigger()))
-    FireThruster(ThrusterHorizontalLeft,joy.rightTrigger())
+    #show("  RightTrg:", fmtFloat(joy.rightTrigger()))
+    FireThrusterForward(ThrusterHorizontalLeft,bounding(joy.rightTrigger()))
     
     
-    # A/B/X/Y buttons
-    show("  Buttons:")
-    showIf(joy.A(), "A")
-    showIf(joy.B(), "B")
-    showIf(joy.X(), "X")
-    showIf(joy.Y(), "Y")
-    # Dpad U/D/L/R
-    show("  Dpad:")
-    showIf(joy.dpadUp(),    "U")
-    showIf(joy.dpadDown(),  "D")
-    showIf(joy.dpadLeft(),  "L")
-    showIf(joy.dpadRight(), "R")
-    # Move cursor back to start of line
-    show(chr(13))
+
 # Close out when done
 joy.close()
-
