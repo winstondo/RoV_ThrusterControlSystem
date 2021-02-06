@@ -1,9 +1,16 @@
-import RPi.GPIO as gp
+#Programmer: Israel Garcia Figueroa
+#program: operates the camera on with arducam module
+#Team: ROV team
+#---------------------------------------------------
+import RPi.GPIO as gp 
 import os
-from picamera import PiCamera
+import xbox
+import time
+from picamera import PiCamera # 
+
+# gpio being set up for i2c interface
 gp.setwarnings(False)
 gp.setmode(gp.BOARD)
-
 
 gp.setup(7, gp.OUT)
 gp.setup(11, gp.OUT)
@@ -20,38 +27,48 @@ gp.output(15, True)
 gp.output(16, True)
 gp.output(21, True)
 gp.output(22, True)
+#end of i2c setup for camera
 
-def main():
-    #print("Start testing the camera A")
-    a = 0; #this will be for the input form the xbox controller which is initialized to 0
-    while(1):
-        #read input from the xbox controller which will button Y
-        if (a == 0): 
-            i2c = "i2cset -y 1 0x70 0x00 0x04"
+joy = xbox.Joystick() # joy object for our xbox 360 camera
+
+camera = 1# O will be cam a and 1 will be cam b 
+permit = False #semiphore to prevent setupt on the 
+while(1):
+    if joy.Y(): # calls on xbox.py to check button press: 0 -> false, 1 -> true
+        print("camera button was pressed")
+        time.sleep(.4) #rebounding on button press
+        if camera == 0:
+            camera = 1
+            permit = True
+            #cmd = "raspistill -t 1"
+            os.system(cmd)
+            
+        elif camera ==1:
+            camera =0
+            permit =True
+    
+    if permit == True: # condition will check if to change camera
+        print("changing camera to ")
+        if camera == 0 :
+            permit = False
+            i2c = "i2cset -y 1 0x70 0x00 0x04 "
             os.system(i2c)
             gp.output(7, False)
             gp.output(11, False)
             gp.output(12, True)
-            capture(1)
-
-    #rint("Start testing the camera C")
-        elif (a == 1): # 
+            print("Camera A")
+            cmd = "raspistill -p 0,0,1280,720 -t 1800000  -k" # will time after 30 min
+            os.system(cmd)
+            
+        elif camera == 1:
+            permit = False
             i2c = "i2cset -y 1 0x70 0x00 0x06"
             os.system(i2c)
-            gp.output(7, False)
+            gp.output(7, False) 
             gp.output(11, True)
             gp.output(12, False)
-            start_preview(); 
-            capture(3)
-
-
-def capture(cam):
-    cmd = "raspistill -t 0 "
-    os.system(cmd)
-
-if __name__ == "__main__":
-    main()
-
-    gp.output(7, False)
-    gp.output(11, False)
-    gp.output(12, True)
+            print("camera B")
+            cmd = "raspistill -p 0,0,1280,720 -t 1800000 -k"
+            os.system(cmd)
+#                 to end current camera process, press key k then key enter
+#                 then press the y button to swap camera
