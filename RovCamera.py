@@ -72,3 +72,4 @@ while(1):
             os.system(cmd)
 #                 to end current camera process, press key k then key enter
 #                 then press the y button to swap camera
+#  NOTE: the keystorks must be within the terminal or else the operation will not work. 
