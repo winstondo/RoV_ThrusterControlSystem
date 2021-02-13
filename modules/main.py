@@ -1,8 +1,8 @@
-import ArducamInit
+import ArduCamInit
 import controllerInit
 import CameraControlling
 import swapCamera
-def main():
+#def main():
     ArducamInit.ArducamInit()
     controllerInit.controllerInit()
     while(1):
