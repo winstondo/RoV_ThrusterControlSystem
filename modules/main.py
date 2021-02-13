@@ -1,6 +1,10 @@
 import ArducamInit
 import controllerInit
+import CameraControlling
+import swapCamera
 def main():
     ArducamInit.ArducamInit()
-    if CameraControlling():
-        swapCamera()
+    controllerInit.controllerInit()
+    while(1):
+        if CameraControlling(CameraControlling.joy):
+            swapCamera(CameraControlling.camera, CameraControlling.permit)
