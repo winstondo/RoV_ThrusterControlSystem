@@ -1,5 +1,5 @@
-def controllerInit():
-    import os
-    import xbox
-    import time
-    from picamera import PiCamera #
+
+import os
+import xbox as Xb
+import time
+from picamera import PiCamera #
