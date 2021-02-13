@@ -1,6 +1,7 @@
 # RoV_ThrusterControlSystem
 
-main file is now rov_control_GPIO
+main file is now rov_control_GPIO. 
+
 I had to rewrite the software to use the rasberry pi's native GPIO. Also it has to use the pi's software driven PWM to control the ESC.
 The previous code used a variation of DC control to move control the motors. But the brushless motor thrusters that are being utilized for the ROV utilize an ESC which is controled using a PWM signal, similar to a servo motor.
 
