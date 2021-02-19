@@ -1,4 +1,5 @@
 def ArducamInit():
+    print("setting up camera module")
     from picamera import PiCamera #
     import RPi.GPIO as gp
 
