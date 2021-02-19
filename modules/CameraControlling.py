@@ -2,8 +2,8 @@
 camera = 1 # O will be cam a and 1 will be cam b
 permit = False #semiphore to prevent setupt on the
 
-def CameraControlling():
-    if joy.Y(): # calls on xbox.py to check button press: 0 -> false, 1 -> true
+def CameraControlling(arg1):
+    if arg1.Y(): # calls on xbox.py to check button press: 0 -> false, 1 -> true
         print("camera button was pressed")
         time.sleep(.4) #rebounding on button press
         if camera == 0:
