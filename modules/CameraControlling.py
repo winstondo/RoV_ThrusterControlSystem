@@ -1,7 +1,9 @@
 #joy = xbox.Joystick() # joy object for our xbox 360 camera
 import time
-global camera = 1 # O will be cam a and 1 will be cam b
-global permit = False #semiphore to prevent setupt on the
+global camera  # O will be cam a and 1 will be cam b
+camera = 1 
+global permit  #semiphore to prevent setupt on the
+permit = True
 
 def CamController(arg1):
     global camera
