@@ -3,7 +3,7 @@ import controllerInit
 import CameraControlling
 import swapCamera
 #def main():
-joy = controllerInit.controllerInit()
+joy = controllerInit.ControllerInit()
 ArduCamInit.ArducamInit()
 
 while(1):
