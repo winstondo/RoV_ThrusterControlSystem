@@ -1,4 +1,5 @@
 import os
+import RPi.GPIO as gp
 from picamera import PiCamera #
 def SwapCamera(camera, permit):
     if permit == True: # condition will check if to change camera

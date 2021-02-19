@@ -14,9 +14,9 @@ def CamController(arg1):
         if camera == 0:
             camera = 1
             permit = True
-            return true
+            return True
             #cmd = "raspistill -t 1"
-        elif camera ==1:
+        elif camera == 1:
             camera = 0
             permit = True
             return True
