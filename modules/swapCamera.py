@@ -1,3 +1,5 @@
+import os
+from picamera import PiCamera #
 def SwapCamera(camera, permit):
     if permit == True: # condition will check if to change camera
         print("changing camera to ")
