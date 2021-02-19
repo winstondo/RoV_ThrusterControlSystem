@@ -7,5 +7,5 @@ joy = controllerInit.ControllerInit()
 ArduCamInit.ArducamInit()
 
 while(1):
-    if CameraControlling(joy):
-        swapCamera(CameraControlling.camera, CameraControlling.permit)
+    if CameraControlling.CamController(joy):
+        swapCamera.SwapCamera(CameraControlling.camera, CameraControlling.permit)

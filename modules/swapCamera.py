@@ -1,4 +1,4 @@
-def swapCamera(camera, permit):
+def SwapCamera(camera, permit):
     if permit == True: # condition will check if to change camera
         print("changing camera to ")
         if camera == 0 :
