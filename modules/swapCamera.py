@@ -12,7 +12,7 @@ def SwapCamera(camera, permit):
             gp.output(11, False)
             gp.output(12, True)
             print("Camera A")
-            cmd = "raspistill -p 0,0,1280,720 -t 1800000  -k &" # will time after 30 min
+            cmd = "raspistill -p 0,0,1920,1080 -t 1800000  -k &" # will time after 30 min
             os.system(cmd)
 
         elif camera == 1:
@@ -23,5 +23,5 @@ def SwapCamera(camera, permit):
             gp.output(11, True)
             gp.output(12, False)
             print("camera B")
-            cmd = "raspistill -p 0,0,1280,720 -t 1800000 -k &"
+            cmd = "raspistill -p 0,0,1920,1080 -t 1800000 -k &"
             os.system(cmd)
