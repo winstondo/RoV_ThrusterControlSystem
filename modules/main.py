@@ -12,3 +12,4 @@ print("starting main program")
 while(1):
     if CameraControlling.CamController(joy):
         swapCamera.SwapCamera(CameraControlling.camera, CameraControlling.permit)
+    print("looping")
