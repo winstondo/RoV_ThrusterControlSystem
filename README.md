@@ -31,7 +31,15 @@ Check the version with:
 ```
 pigpiod -v
 ```
-Refer to http://abyz.me.uk/rpi/pigpio/index.html for instructions.
+ensure that the pigpio daemon is running by running:
+```
+sudo pigpiod
+```
+or by uncommenting out this line in the code:
+```python
+os.system ("sudo pigpiod")
+```
+Refer to http://abyz.me.uk/rpi/pigpio/index.html for further instructions.
 
 ## Current Issues:
   
