@@ -4,6 +4,7 @@ main file is now rov_control_GPIO.
 
 Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
 <h2> Initialization:
+ 
 <h3> Xbox Driver:
  
 To initilize first ensure the xbox controller driver is installed: 
