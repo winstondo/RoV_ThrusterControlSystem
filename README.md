@@ -2,16 +2,37 @@
 
 main file is now rov_control_GPIO. 
 
-I had to rewrite the software to use the rasberry pi's native GPIO. Also it has to use the pi's software driven PWM to control the ESC.
-The previous code used a variation of DC control to move control the motors. But the brushless motor thrusters that are being utilized for the ROV utilize an ESC which is controled using a PWM signal, similar to a servo motor.
+Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
+<h2> Initialization:
+<h3> Xbox Driver:
+ 
+To initilize first ensure the xbox controller driver is installed: 
 
-The software is untested as I dont have access to a compatible power supply. Currently, the thrusters are capable of firing forward. Due to poor docummentation of the ESC I am still in the process of figuring out which PWM signals tell the ESC to fire the thruster backwards. These ESCs are capable of reverse motion as stated by the products Amazon page but there is little to no documentation how to do so.
+```
+sudo apt-get install xboxdrv
+```
 
-Will update later.
+To test the driver use:
+```
+sudo xboxdrv --detach-kernel-driver
+```
 
-right now the all it does is fires the main thruster (m3 @full speed) forward once the right bumper is pushed and stops firing once it is released,
-left bumper does the same to the main thruster but backwards
+Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver
+<h3> PWM GPIO driver:
+  
+Ensure the pigpio library is installed:
+```
+sudo apt-get install pigpio python-pigpio python3-pigpio
+```
+Check the version with:
+```
+pigpiod -v
+```
+Refer to http://abyz.me.uk/rpi/pigpio/index.html for instructions.
+<h2> Current Issues:
+  
+The analog stick is too sensitive and does not adequetly send out a consistant signal to the ESC, which causes the thrusters to stop firing if the analog stick is not in the appropriate dead zone. Some interpolation is needed to smooth this out.
 
-These thruster controls depend on two major libaries: the xbox360controller libary which handels input from the xbox controller via usb and the MotorControllerHAT which controls the motor controller output
+Initilization takes forever and can be shortend.
 
-The majority of these files are redundant, but kept for compatability issues. Ill prune the files once I get the software to an apporpriate level.
+Further testing with all four thrusters.
