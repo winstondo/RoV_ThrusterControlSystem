@@ -7,7 +7,7 @@ import RPi.GPIO as GPIO
 import pigpio
 
 #Set GPIO numbering mode
-#sets the pin numbering to match the BCM  which uses GPIO channel numbering
+#sets the pin numbering to match the BCM which uses GPIO channel numbering
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
@@ -25,7 +25,7 @@ class objThruster:
 frontThruster = objThruster("FrontDorsalThruster",11)
 backThruster = objThruster("BackDorsalThruster",13)
 leftThruster = objThruster("LeftThruster",17)
-rightThruster = objThruster("RightThruster",16)
+rightThruster = objThruster("RightThruster",27)
 THRUSTER_LIST = [frontThruster, backThruster, leftThruster, rightThruster]
 
 #FRONT_THRUSTER_PIN = 11
@@ -38,29 +38,31 @@ THRUSTER_LIST = [frontThruster, backThruster, leftThruster, rightThruster]
 
 
 #run sudo pigpiod in console or uncomment out this line
-#os.system ("sudo pigpiod")
+os.system ("sudo pigpiod")
 pi = pigpio.pi()
 #ESC Calibration
 #function to calibrate and initlize all the thrusters. requires a global list of thruster objects
 
 MAX_THROTTLE = 2000
-MIN_THROTTLE = 1000
-NEUTRAL_THROTTLE = 1500
+MIN_THROTTLE = 1000 
+NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
 
 def arm():
-
     for thruster in THRUSTER_LIST:    
         print("initilizing:{} at 0".format(thruster.name))
         pi.set_servo_pulsewidth(thruster.pin, 0)
-        time.sleep(5)
+        #time.sleep(2)
+        CountSleep(2)
         print("initilizing:{} at {}".format(thruster.name, MAX_THROTTLE))
         pi.set_servo_pulsewidth(thruster.pin, MAX_THROTTLE)
         print("5s to turn on power now:" )
-        time.sleep(7)
+        CountSleep(5)
+        #time.sleep(3)
         print("initilizing:{} at {}".format(thruster.name, NEUTRAL_THROTTLE))
         pi.set_servo_pulsewidth(thruster.pin, NEUTRAL_THROTTLE)
-        time.sleep(2)
-       
+        CountSleep(3)
+        #time.sleep(3)
+    print("Initilization process completed")
 
 
 #PWM initilization
@@ -86,6 +88,16 @@ def bounding(x, min_val, max_val):
     return min_val + int(x*(max_val-min_val))
 
 
+#desc: sleeps for the argument time and outputs a countdown
+#input: interger
+#output:none 
+def CountSleep(seconds):
+  for i in range(seconds):
+    time.sleep(1)
+    print(seconds-i)
+
+    
+
 # Format floating point number to string format -x.xxx
 def fmtFloat(n):
     return '{:6.3f}'.format(n)
@@ -102,17 +114,41 @@ def showIf(boolean, ifTrue, ifFalse=" "):
     else:
         show(ifFalse)
 
+#control functions
 
+#thruster shutoff function
+#desc: takes a thruster object and a coresponding throttle value and fires the thruster forward
+#input:thruster object
+#output: none 
+def ShutOffThruster(thruster):
+    pi.set_servo_pulsewidth(thruster.pin,NEUTRAL_THROTTLE)
 
+def ShutDown():
+    for thruster in THRUSTER_LIST:    
+        print("shutting off: {}".format(thruster.name))
+        pi.set_servo_pulsewidth(thruster.pin, 0)
+        time.sleep(2)
+        
+   
 
+#thruster forward function
+#desc: takes a thruster object and a coresponding throttle value and fires the thruster forward
+#input:thruster object, throttle value
+#output: none 
 def FireThrusterForward(thruster, throttle): #already uses boudning function to
     pi.set_servo_pulsewidth(thruster.pin, bounding(throttle,NEUTRAL_THROTTLE,MAX_THROTTLE))
 
-
+#thruster bkwd function
+#desc: takes a thruster object and a coresponding throttle value and fires the thruster backwards
+#input:thruster object, throttle value
+#output: none 
 def FireThrusterBackward(thruster, throttle):
     pi.set_servo_pulsewidth(thruster.pin, bounding(throttle, MIN_THROTTLE, NEUTRAL_THROTTLE))
 
-
+#left analog stick control function
+#desc: takes the output of the left analog stick fires the appropriate thrusters using control logic to orientate the rov 
+#input:joystick object, 4 thruster objects (must be in order:FBLR)
+#output: none 
 #arguments(joystick object of xbox, thrusters1-4)
 def LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
     AxisY = joy.leftY()
@@ -149,7 +185,7 @@ arm()
 while not joy.Back():
     # Show connection status
     #show("Connected:")
-    showIf(joy.connected(), "Y", "N")
+    #showIf(joy.connected(), "Y", "N")
     # Left analog stick
     #show("  Left X/Y:", fmtFloat(joy.leftX()), "/", fmtFloat(joy.leftY()))
     LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThruster)
@@ -159,8 +195,11 @@ while not joy.Back():
     FireThrusterForward(leftThruster,joy.rightTrigger())
     
     
-
+print("[Back] button pressed...shutting down")
+print("Shutting thrusters off")
+ShutDown()
 # Close out when done
 joy.close()
+
 
 
