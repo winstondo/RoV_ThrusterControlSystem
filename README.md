@@ -41,8 +41,7 @@ os.system ("sudo pigpiod")
 ```
 Refer to http://abyz.me.uk/rpi/pigpio/index.html for further instructions.
 
-## MISC
-### ESC Calibration.
+### ESC Calibration:
 ESCs are manufactured in china and have spotty documentation.
 To calibrate the ESCs for forward and reverse, the instructions that came with the ESC say to
 1. Connect everything to the ESC 
