@@ -126,7 +126,7 @@ def ShutOffThruster(thruster):
 def ShutDown():
     for thruster in THRUSTER_LIST:    
         print("shutting off: {}".format(thruster.name))
-        pi.set_servo_pulsewidth(thruster.pin, 0)
+        pi.set_servo_pulsewidth(thruster.pin, NEUTRAL_THROTTLE)
         time.sleep(2)
         
    
