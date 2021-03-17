@@ -78,7 +78,7 @@ def arm():
 #helper functions
 
 
-#bounding function
+#bounding function DEPRECIATED DO NOT USE
 #desc: takes a float value between 1 to -1 and outputs an absolute int value between min and max
 #input:float between 1 to -1
 #output int value 
@@ -87,6 +87,13 @@ def bounding(x, min_val, max_val):
         return min_val + int(x/-1*(max_val-min_val))
     return min_val + int(x*(max_val-min_val))
 
+
+#desc: takes a float value between 1 to -1 and outputs an int value between min and max with zero being the mid value. This uses a linear curve to scale the float value. 
+#this function removes the use of a forward and backward thruster function infavor of a single function
+#input:float between 1 to -1, a min, max and mid value
+#output int value
+def linearResponseCurve(x, min_val, mid_val, max_val):
+  return int((max_val - min_val)/2 * x + mid_val)
 
 #desc: sleeps for the argument time and outputs a countdown
 #input: interger
@@ -131,19 +138,26 @@ def ShutDown():
         
    
 
+#thruster fire function
+#desc: takes a thruster object and a coresponding throttle value and fires the thruster 
+#input:thruster object, throttle value
+#output: none 
+def FireThruster(thruster, throttle): #already uses boudning function to
+    pi.set_servo_pulsewidth(thruster.pin, linearResponseCurve(throttle,MIN_THROTTLE, NEUTRAL_THROTTLE,MAX_THROTTLE))
+
 #thruster forward function
 #desc: takes a thruster object and a coresponding throttle value and fires the thruster forward
 #input:thruster object, throttle value
 #output: none 
-def FireThrusterForward(thruster, throttle): #already uses boudning function to
-    pi.set_servo_pulsewidth(thruster.pin, bounding(throttle,NEUTRAL_THROTTLE,MAX_THROTTLE))
+#def FireThrusterForward(thruster, throttle): #already uses boudning function to
+#    pi.set_servo_pulsewidth(thruster.pin, bounding(throttle,NEUTRAL_THROTTLE,MAX_THROTTLE))
 
 #thruster bkwd function
 #desc: takes a thruster object and a coresponding throttle value and fires the thruster backwards
 #input:thruster object, throttle value
 #output: none 
-def FireThrusterBackward(thruster, throttle):
-    pi.set_servo_pulsewidth(thruster.pin, bounding(throttle, MIN_THROTTLE, NEUTRAL_THROTTLE))
+#def FireThrusterBackward(thruster, throttle):
+#    pi.set_servo_pulsewidth(thruster.pin, bounding(throttle, MIN_THROTTLE, NEUTRAL_THROTTLE))
 
 #left analog stick control function
 #desc: takes the output of the left analog stick fires the appropriate thrusters using control logic to orientate the rov 
@@ -173,6 +187,19 @@ def LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThrus
         FireThrusterForward(leftThruster, AxisX)
         FireThrusterBackward(rightThruster, AxisX)
         
+
+#left analog stick control function
+#desc: takes the output of the controller fires the appropriate thrusters using control logic to orientate the rov 
+#input:joystick object, 4 thruster objects (must be in order:FBLR)
+#output: none 
+#arguments(joystick object of xbox, thrusters1-4)
+def ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
+    FireThruster(leftThruster, joy.leftX())
+    FireThruster(rightThruster, -1*joy.leftX())
+    
+
+        
+     
 # Instantiate the controller
 joy = xbox.Joystick()
 
@@ -188,11 +215,8 @@ while not joy.Back():
     #showIf(joy.connected(), "Y", "N")
     # Left analog stick
     #show("  Left X/Y:", fmtFloat(joy.leftX()), "/", fmtFloat(joy.leftY()))
-    LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThruster)
+    ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruster)
     
-    # Right trigger
-    #show("  RightTrg:", fmtFloat(joy.rightTrigger()))
-    FireThrusterForward(leftThruster,joy.rightTrigger())
     
     
 print("[Back] button pressed...shutting down")
