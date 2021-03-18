@@ -56,8 +56,10 @@ Refer to the manufacture's website for specifications: http://www.ztwshop.com/pr
 
 ## Current Issues:
   
-~~The analog stick is too sensitive and does not adequetly send out a consistant signal to the ESC, which causes the thrusters to stop firing if the analog stick is not in the appropriate dead zone. Some interpolation is needed to smooth this out.~~
-###Patch 1
+~~The analog stick is too sensitive and does not adequetly send out a consistant signal to the ESC, which causes the thrusters to stop firing if the analog stick is not in the ~~ appropriate dead zone. Some interpolation is needed to smooth this out.~~
+
+###Patch 1:
+
 New software logic should iron out theses issues. 
 Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the RoV accend. LT should cause the craft to decend.
 
