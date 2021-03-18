@@ -197,12 +197,12 @@ def ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruste
     FireThruster(leftThruster, joy.leftX() + joy.leftY())
     FireThruster(rightThruster, -1*joy.leftX() + joy.leftY())
     if (joy.righttrigger() > 0) ):
-        FireThruster(leftThruster, joy.righttrigger())
-        FireThruster(rightThruster, joy.righttrigger())
+        FireThruster(frontThruster, joy.righttrigger())
+        FireThruster(backThruster, joy.righttrigger())
     #backward logic for left trigger reversing. 
     elif (joy.lefttrigger() > 0):
-        FireThruster(leftThruster, -1*joy.lefttrigger())
-        FireThruster(rightThruster, -1*joy.lefttrigger())
+        FireThruster(frontThruster, -1*joy.lefttrigger())
+        FireThruster(backThruster, -1*joy.lefttrigger())
     
 
         
