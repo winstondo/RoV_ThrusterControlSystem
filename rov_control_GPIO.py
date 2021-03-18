@@ -194,8 +194,15 @@ def LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThrus
 #output: none 
 #arguments(joystick object of xbox, thrusters1-4)
 def ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
-    FireThruster(leftThruster, joy.leftX())
-    FireThruster(rightThruster, -1*joy.leftX())
+    FireThruster(leftThruster, joy.leftX() + joy.leftY())
+    FireThruster(rightThruster, -1*joy.leftX() + joy.leftY())
+    if (joy.righttrigger() > 0) ):
+        FireThruster(leftThruster, joy.righttrigger())
+        FireThruster(rightThruster, joy.righttrigger())
+    #backward logic for left trigger reversing. 
+    elif (joy.lefttrigger() > 0):
+        FireThruster(leftThruster, -1*joy.lefttrigger())
+        FireThruster(rightThruster, -1*joy.lefttrigger())
     
 
         
