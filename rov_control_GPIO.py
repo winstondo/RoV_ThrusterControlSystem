@@ -145,50 +145,7 @@ def ShutDown():
 def FireThruster(thruster, throttle): #already uses boudning function to
     pi.set_servo_pulsewidth(thruster.pin, linearResponseCurve(throttle,MIN_THROTTLE, NEUTRAL_THROTTLE,MAX_THROTTLE))
 
-#thruster forward function
-#desc: takes a thruster object and a coresponding throttle value and fires the thruster forward
-#input:thruster object, throttle value
-#output: none 
-#def FireThrusterForward(thruster, throttle): #already uses boudning function to
-#    pi.set_servo_pulsewidth(thruster.pin, bounding(throttle,NEUTRAL_THROTTLE,MAX_THROTTLE))
-
-#thruster bkwd function
-#desc: takes a thruster object and a coresponding throttle value and fires the thruster backwards
-#input:thruster object, throttle value
-#output: none 
-#def FireThrusterBackward(thruster, throttle):
-#    pi.set_servo_pulsewidth(thruster.pin, bounding(throttle, MIN_THROTTLE, NEUTRAL_THROTTLE))
-
-#left analog stick control function
-#desc: takes the output of the left analog stick fires the appropriate thrusters using control logic to orientate the rov 
-#input:joystick object, 4 thruster objects (must be in order:FBLR)
-#output: none 
-#arguments(joystick object of xbox, thrusters1-4)
-def LeftStickThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
-    AxisY = joy.leftY()
-    AxisX = joy.leftX()
-    if(AxisY > 0):
-        
-        FireThrusterForward(leftThruster, AxisY)
-        FireThrusterForward(rightThruster,AxisY)
-        
-    elif(AxisY < 0):
-        
-        FireThrusterBackward(leftThruster, AxisY)
-        FireThrusterBackward(rightThruster, AxisY)
-    
-    if(AxisX < 0): #stick is pushed left
-        
-        FireThrusterForward(rightThruster, AxisX)
-        FireThrusterBackward(leftThruster, AxisX)
-    
-    elif(AxisX > 0):#stick is pushed right
-        
-        FireThrusterForward(leftThruster, AxisX)
-        FireThrusterBackward(rightThruster, AxisX)
-        
-
-#left analog stick control function
+#main thruster control function logic
 #desc: takes the output of the controller fires the appropriate thrusters using control logic to orientate the rov 
 #input:joystick object, 4 thruster objects (must be in order:FBLR)
 #output: none 
