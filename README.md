@@ -75,15 +75,17 @@ Further testing with all four thrusters.
 
 ## Static IP address on the Host Computer
 
-First establish a static IPv4 address on the host computer via the network configuration on the Control Panel
-Make the IP address something memorable but the default is 192.168.1.1
+First establish a static IPv4 address on the host computer via the network configuration on the Control Panel.
+Make the IP address something memorable but the default is **192.168.1.1**.
 
 ## DHCP Server
 Install the DHCP server software:
 http://www.dhcpserver.de/cms/download/
-DHCP will automatically assign IP addressesses to your PI: default is 192.168.1.2-4
-Do not have the IP adress range collide with the currently set static IP address
-Configure the DHCP server software by giving it the range of IP adresses. Ensure the range of small considering only one pi is connected at a time. 
+DHCP will automatically assign IP addressesses to your PI: default is **192.168.1.2-4**
+
+Do not have the IP adresses range collide with the currently set static IP address.
+
+Configure the DHCP server software by giving it the range of IP adresses. Ensure the range should be small considering only one pi is connected at a time. 
 
 ## Connection:
 Now use PuTTY SSH or Remote Desktop to connect to the pi directly. Its easier to connect using the default host name: **raspberrypi**, rather than the IP address. If for whatever reason the raspberry PI's hostname is unknown, then connect to it directly and use the following to get the host name.
