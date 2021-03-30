@@ -145,7 +145,7 @@ def FireThruster(thruster, throttle): #already uses boudning function to
 def ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
     FireThruster(leftThruster, joy.leftX() + joy.leftY())
     FireThruster(rightThruster, -1*joy.leftX() + joy.leftY())
-    if (joy.righttrigger() > 0) ):
+    if (joy.righttrigger() > 0):
         FireThruster(frontThruster, joy.righttrigger())
         FireThruster(backThruster, joy.righttrigger())
     #backward logic for left trigger reversing. 
