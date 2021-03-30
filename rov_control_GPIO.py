@@ -28,14 +28,6 @@ leftThruster = objThruster("LeftThruster",17)
 rightThruster = objThruster("RightThruster",27)
 THRUSTER_LIST = [frontThruster, backThruster, leftThruster, rightThruster]
 
-#FRONT_THRUSTER_PIN = 11
-#BACK_THRUSTER_PIN = 13
-#LEFT_THRUSTER_PIN = 17
-#RIGHT_THRUSTER_PIN = 16
-#THRUSTER_PIN_LIST = [FRONT_THRUSTER_PIN, BACK_THRUSTER_PIN, LEFT_THRUSTER_PIN, RIGHT_THRUSTER_PIN]
-
-
-
 
 #run sudo pigpiod in console or uncomment out this line
 os.system ("sudo pigpiod")
