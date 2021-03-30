@@ -1,3 +1,11 @@
+## Patch 1:
+
+New software logic should iron out theses issues. 
+Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the RoV accend. LT should cause the craft to decend. 
+
+Once the Patch 1 is tested with the ROV throughly, merge patch 1 with the main branch.
+
+
 # RoV_ThrusterControlSystem
 
 main file is now rov_control_GPIO. 
@@ -56,6 +64,28 @@ Refer to the manufacture's website for specifications: http://www.ztwshop.com/pr
 
 ## Current Issues:
   
+~~The analog stick is too sensitive and does not adequetly send out a consistant signal to the ESC, which causes the thrusters to stop firing if the analog stick is not in the ~~ appropriate dead zone. Some interpolation is needed to smooth this out.~~
 Initilization takes forever and can be shortend.
 
 Further testing with all four thrusters.
+
+
+# Connection to Raspberry Pi via Ethernet
+
+## Static IP address on the Host Computer
+
+First establish a static IPv4 address on the host computer via the network configuration on the Control Panel
+Make the IP address something memorable but the default is 192.168.1.1
+
+## DHCP Server
+Install the DHCP server software:
+http://www.dhcpserver.de/cms/download/
+DHCP will automatically assign IP addressesses to your PI: default is 192.168.1.2-4
+Do not have the IP adress range collide with the currently set static IP address
+Configure the DHCP server software by giving it the range of IP adresses. Ensure the range of small considering only one pi is connected at a time. 
+
+## Connection:
+Now use PuTTY SSH or Remote Desktop to connect to the pi directly. Its easier to connect using the default host name: **raspberrypi**, rather than the IP address. If for whatever reason the raspberry PI's hostname is unknown, then connect to it directly and use the following to get the host name.
+```
+sudo hostname
+```
