@@ -1,6 +1,7 @@
 ## Patch 1:
 
 New software logic should iron out theses issues. 
+
 Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the RoV accend. LT should cause the craft to decend. 
 
 Once the Patch 1 is tested with the ROV throughly, merge patch 1 with the main branch.
