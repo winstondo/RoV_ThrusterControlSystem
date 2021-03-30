@@ -1,6 +1,6 @@
 ## Patch 1:
 
-New software logic should iron out theses issues. 
+New software logic should iron out left analog stick issues. 
 
 Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the RoV accend. LT should cause the craft to decend. 
 
