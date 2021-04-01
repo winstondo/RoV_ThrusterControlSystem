@@ -35,10 +35,14 @@ pi = pigpio.pi()
 #ESC Calibration
 #function to calibrate and initlize all the thrusters. requires a global list of thruster objects
 
+#throttle globals
 MAX_THROTTLE = 2000
 MIN_THROTTLE = 1000 
 NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
 
+#desc: Arms each thruster on the craft and outputs diagnostic message. First sets throttle to zero then to max and finnally at the neutral value. Sequence given by ESC documentation.
+#input:none
+#output: none
 def arm():
     for thruster in THRUSTER_LIST:    
         print("initilizing:{} at 0".format(thruster.name))
@@ -60,15 +64,8 @@ def arm():
 #PWM initilization
 #ESC_CONTROL_FREQUENCY = 50 #setting the esc pulse control to 50hz
 
-#frontThruster = GPIO.PWM(FRONT_THRUSTER_PIN, ESC_CONTROL_FREQUENCY)
-#backThruster = GPIO.PWM(BACK_THRUSTER_PIN, ESC_CONTROL_FREQUENCY)
-#leftThruster = GPIO.PWM(LEFT_THRUSTER_PIN, ESC_CONTROL_FREQUENCY)
-#rightThruster = GPIO.PWM(RIGHT_THRUSTER_PIN, ESC_CONTROL_FREQUENCY)
-
-
 
 #helper functions
-
 
 #bounding function DEPRECIATED DO NOT USE
 #desc: takes a float value between 1 to -1 and outputs an absolute int value between min and max
@@ -94,9 +91,7 @@ def CountSleep(seconds):
   for i in range(seconds):
     time.sleep(1)
     print(seconds-i)
-
-    
-
+ 
 # Format floating point number to string format -x.xxx
 def fmtFloat(n):
     return '{:6.3f}'.format(n)
@@ -123,13 +118,13 @@ def ShutOffThruster(thruster):
     pi.set_servo_pulsewidth(thruster.pin,NEUTRAL_THROTTLE)
 
 def ShutDown():
+    print("Thruster shutdown sequence initiating...")
     for thruster in THRUSTER_LIST:    
         print("shutting off: {}".format(thruster.name))
         pi.set_servo_pulsewidth(thruster.pin, NEUTRAL_THROTTLE)
         time.sleep(2)
         
    
-
 #thruster fire function
 #desc: takes a thruster object and a coresponding throttle value and fires the thruster 
 #input:thruster object, throttle value
@@ -145,13 +140,12 @@ def FireThruster(thruster, throttle): #already uses boudning function to
 def ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruster):
     FireThruster(leftThruster, joy.leftX() + joy.leftY())
     FireThruster(rightThruster, -1*joy.leftX() + joy.leftY())
-    if (joy.righttrigger() > 0):
-        FireThruster(frontThruster, joy.righttrigger())
-        FireThruster(backThruster, joy.righttrigger())
-    #backward logic for left trigger reversing. 
-    elif (joy.lefttrigger() > 0):
-        FireThruster(frontThruster, -1*joy.lefttrigger())
-        FireThruster(backThruster, -1*joy.lefttrigger())
+    #acent and decent control
+    FireThruster(frontThruster, joy.righttrigger())
+    FireThruster(backThruster, joy.righttrigger())
+    #backward logic for left trigger reversing.
+    FireThruster(frontThruster, -1*joy.lefttrigger())
+    FireThruster(backThruster, -1*joy.lefttrigger())
     
 
         
@@ -176,7 +170,6 @@ while not joy.Back():
     
     
 print("[Back] button pressed...shutting down")
-print("Shutting thrusters off")
 ShutDown()
 # Close out when done
 joy.close()
