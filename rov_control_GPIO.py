@@ -30,7 +30,7 @@ THRUSTER_LIST = [frontThruster, backThruster, leftThruster, rightThruster]
 
 
 #run sudo pigpiod in console or uncomment out this line
-os.system ("sudo pigpiod")
+#os.system ("sudo pigpiod")
 pi = pigpio.pi()
 #ESC Calibration
 #function to calibrate and initlize all the thrusters. requires a global list of thruster objects
@@ -39,6 +39,7 @@ pi = pigpio.pi()
 MAX_THROTTLE = 2000
 MIN_THROTTLE = 1000 
 NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
+ARMING_INTERVAL = 4 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
 
 #desc: Arms each thruster on the craft and outputs diagnostic message. First sets throttle to zero then to max and finnally at the neutral value. Sequence given by ESC documentation.
 #input:none
@@ -47,17 +48,16 @@ def arm():
     for thruster in THRUSTER_LIST:    
         print("initilizing:{} at 0".format(thruster.name))
         pi.set_servo_pulsewidth(thruster.pin, 0)
-        #time.sleep(2)
-        CountSleep(2)
+        
+        CountSleep(int(ARMING_INTERVAL/2))
         print("initilizing:{} at {}".format(thruster.name, MAX_THROTTLE))
         pi.set_servo_pulsewidth(thruster.pin, MAX_THROTTLE)
         print("5s to turn on power now:" )
-        CountSleep(5)
-        #time.sleep(3)
+        CountSleep(ARMING_INTERVAL)
+        
         print("initilizing:{} at {}".format(thruster.name, NEUTRAL_THROTTLE))
         pi.set_servo_pulsewidth(thruster.pin, NEUTRAL_THROTTLE)
-        CountSleep(3)
-        #time.sleep(3)
+        CountSleep(int(ARMING_INTERVAL/2))
     print("Initilization process completed")
 
 
@@ -141,11 +141,11 @@ def ControlThruster(joy, frontThruster, backThruster, leftThruster, rightThruste
     FireThruster(leftThruster, joy.leftX() + joy.leftY())
     FireThruster(rightThruster, -1*joy.leftX() + joy.leftY())
     #acent and decent control
-    FireThruster(frontThruster, joy.righttrigger())
-    FireThruster(backThruster, joy.righttrigger())
+    FireThruster(frontThruster, joy.rightTrigger())
+    FireThruster(backThruster, joy.rightTrigger())
     #backward logic for left trigger reversing.
-    FireThruster(frontThruster, -1*joy.lefttrigger())
-    FireThruster(backThruster, -1*joy.lefttrigger())
+    FireThruster(frontThruster, -1*joy.leftTrigger())
+    FireThruster(backThruster, -1*joy.leftTrigger())
     
 
         
