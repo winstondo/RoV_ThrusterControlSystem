@@ -93,3 +93,10 @@ Now use PuTTY SSH or Remote Desktop to connect to the pi directly. Its easier to
 ```
 sudo hostname
 ```
+
+
+# Controlling the Pi through a host computer (Windows)
+You may have to rewrite the code to have the host computer run the python script (interperting the XInput from the controller on the host computer) and then transmitting those inputs throught the remote access GPIO feature for the PI. 
+
+If the python script slow (i.e. ~1s delay) then it may be prudent to rewrite the code in C++ for faster control.
+https://projects.raspberrypi.org/en/projects/using-pip-on-windows/4
