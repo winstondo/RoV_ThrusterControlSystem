@@ -2,7 +2,6 @@ from __future__ import print_function
 import xbox
 import os
 import time
-#import atexit
 import RPi.GPIO as GPIO
 import pigpio
 
