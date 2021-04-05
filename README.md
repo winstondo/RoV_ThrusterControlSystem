@@ -1,3 +1,22 @@
+## Remote GPIO
+This is the key to using a host computer to pass controller data to the RPi. 
+Requires using a new libary to detect Xbox controller on the host machine with python:
+
+https://pypi.org/project/inputs/0.5/
+
+This also uses a new GPIOZero module on the host machine to pass pwm signals to the RPi.
+Refer to:
+
+https://gpiozero.readthedocs.io/en/stable/api_pins.html#module-gpiozero.pins.pigpio
+
+and 
+
+https://gpiozero.readthedocs.io/en/stable/api_output.html#phaseenablemotor
+
+for a PWM ESC motor. 
+
+If the above doesn't work, then try GPIOZero's servo motor class.
+
 ## Patch 1:
 
 New software logic should iron out left analog stick issues. 
