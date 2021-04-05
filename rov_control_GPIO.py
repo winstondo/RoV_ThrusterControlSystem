@@ -29,17 +29,18 @@ rightThruster = objThruster("RightThruster",27)
 THRUSTER_LIST = [frontThruster, backThruster, leftThruster, rightThruster]
 
 
-#run sudo pigpiod in console or uncomment out this line
+#run sudo pigpiod in console or uncomment out this line. NO LONGER NEEDED.
 #os.system ("sudo pigpiod")
-pi = pigpio.pi()
-#ESC Calibration
-#function to calibrate and initlize all the thrusters. requires a global list of thruster objects
+#pi = pigpio.pi()
 
 #throttle globals
 MAX_THROTTLE = 2000
 MIN_THROTTLE = 1000 
 NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
 ARMING_INTERVAL = 4 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
+
+#ESC Calibration
+#function to calibrate and initlize all the thrusters. requires a global list of thruster objects
 
 #desc: Arms each thruster on the craft and outputs diagnostic message. First sets throttle to zero then to max and finnally at the neutral value. Sequence given by ESC documentation.
 #input:none
