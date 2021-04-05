@@ -25,12 +25,6 @@ To test the driver use:
 sudo xboxdrv --detach-kernel-driver
 ```
 
-To automate running the daemon at boot time, run:
-```
- sudo systemctl enable pigpiod
-```
-This line has already been run with the PI being used for testing.
-
 Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver
 
 ### PWM GPIO driver:
@@ -51,6 +45,14 @@ or by uncommenting out this line in the code:
 ```python
 os.system ("sudo pigpiod")
 ```
+
+To automate running the daemon at boot time, run:
+```
+ sudo systemctl enable pigpiod
+```
+This line has already been run with the PI being used for testing.
+
+
 Refer to http://abyz.me.uk/rpi/pigpio/index.html for further instructions.
 
 ### ESC Calibration:
