@@ -9,9 +9,17 @@ import RPi.GPIO as GPIO
 import pigpio
 
 
-for device in devices:
-    print(device)
+#desc: function that outputs all connected devices
+#dependencies: requires the input module
+#i/o: non
+def getDevices():
+    for device in devices:
+        print(device)
 
+class objThruster:
+    def __init__(self, name, pin):
+        self.name = name
+        self.pin = pin
 
 def main():
     #Just print out some event infomation when the gamepad is used.
