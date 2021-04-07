@@ -89,6 +89,10 @@ To have the pigpio daemon start everytime the RPi boots use:
 ```
 sudo systemctl enable pigpiod
 ```
+and
+```
+sudo systemctl start pigpiod
+```
 This has already been enabled on one of the test RPis.
 
 Refer to http://abyz.me.uk/rpi/pigpio/index.html for further instructions.
