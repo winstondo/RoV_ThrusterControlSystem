@@ -35,7 +35,7 @@ If python is already installed:
 #### pigpio, pygames and gpiozero modules
 Install it on the host computer by using the command:
 ```
-pip instal pigpio pygames gpiozero modules
+pip install pigpio pygame gpiozero modules
 ```
 Check all the installed python modules on the machine by using:
 ```
