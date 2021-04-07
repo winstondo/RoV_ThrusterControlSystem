@@ -37,6 +37,7 @@ Software uses pigpio libary for more accurate pulse width modulation (PWM) to co
 ### Host Computer
 Need to install pigpio, gpiozero and pygames modules.
 Also ensure that python is installed on the host computer.
+
 #### Python on Windows CMD
 Its also easier to use the Windows CMD to use pip. 
 To do this when installing python on the windows machine, ensure that set PATH environment variable changes are checked. 
@@ -50,34 +51,17 @@ If python is already installed:
 
 #### pigpio, pygames and gpiozero modules
 Install it on the host computer by using the command:
-'''
+```
 pip instal pigpio pygames gpiozero modules
-'''
+```
 Check all the installed python modules on the machine by using:
-'''
+```
 pip list
-'''
-
-### Xbox Driver:
-
-No longer used. The driver is only for interfacing a USB controller with a linux machine. Since all the controller interpretation is done on the host machine which is most likely a windows machine, this is now depreciated. 
-
-~~To initilize first ensure the xbox controller driver is installed:~~ 
-
-```
-sudo apt-get install xboxdrv
 ```
 
-~~To test the driver use:~~
-```
-sudo xboxdrv --detach-kernel-driver
-```
+### Raspberry PI:
+Enable I2C, Remote GPIO in the settings.
 
-~~Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver~~
-
-
-### PWM GPIO driver:
-  
 Ensure the pigpio library is installed:
 ```
 sudo apt-get install pigpio python-pigpio python3-pigpio
@@ -86,14 +70,27 @@ Check the version with:
 ```
 pigpiod -v
 ```
-ensure that the pigpio daemon is running by running:
+The pigpio daemon is a piece of software that needs to be running in the back ground for it to work
+
+To manually start the pigpio daemon use:
 ```
 sudo pigpiod
 ```
-or by uncommenting out this line in the code:
+or adding this line in the code in the python script:
 ```python
 os.system ("sudo pigpiod")
 ```
+The command to check when the pigpio daemon starts running is:
+```
+ps  -ef | grep gpio
+```
+
+To have the pigpio daemon start everytime the RPi boots use:
+```
+sudo systemctl enable pigpiod
+```
+This has already been enabled on one of the test RPis.
+
 Refer to http://abyz.me.uk/rpi/pigpio/index.html for further instructions.
 
 ### ESC Calibration:
@@ -108,7 +105,6 @@ The arm() function in the python code should take care of all the ESC calibratio
 
 Refer to the manufacture's website for specifications: http://www.ztwshop.com/product/shark-brushless-esc-for-rc-boat/ztw-shark-40A-bec-for-rc-boat.html
 
-
 ## Current Issues:
   
 ~~The analog stick is too sensitive and does not adequetly send out a consistant signal to the ESC, which causes the thrusters to stop firing if the analog stick is not in the ~~ appropriate dead zone. Some interpolation is needed to smooth this out.~~
@@ -116,6 +112,24 @@ Initilization takes forever and can be shortend.
 
 Further testing with all four thrusters.
 
+## Deprecated
+Functions or drivers that are no longer used but kept for completeness or troubleshooting.
+### Xbox Driver:
+
+No longer used. The driver is only for interfacing a USB controller with a linux machine. All the controller interpretation is done on the host machine which is most likely a windows machine this no longer works. 
+
+To initilize first ensure the xbox controller driver is installed:
+
+```
+sudo apt-get install xboxdrv
+```
+
+To test the driver use:
+```
+sudo xboxdrv --detach-kernel-driver
+```
+
+Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver
 
 # Connection to Raspberry Pi via Ethernet
 
