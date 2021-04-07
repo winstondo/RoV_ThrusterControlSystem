@@ -1,12 +1,16 @@
-## Patch 1:
+## Patch 2.0:
+Implemented new controller API: pygames. Allows Windows host computer to interpret controller input as well as drawing a diagnostic UI.
+Implemented GPIOZero for remote GPIO. Allows the host computer to control the RPis GPIO remotely. 
+Improved thruster software logic should iron out dead zone issues.
 
-New software logic should iron out theses issues. 
+## Patch 1.0:
 Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the RoV accend. LT should cause the craft to decend.
 
 
 # RoV_ThrusterControlSystem
 
-main file is now rov_control_GPIO. 
+~~main file is now rov_control_GPIO.~~ 
+main file is rov_control-Host which should be run on the host computer. Instructions to prepare the RPi and the host computer are detailed below. 
 
 Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
 
