@@ -33,21 +33,48 @@ main file is now rov_control_GPIO.
 Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
 
 ## Initialization:
- 
+
+### Host Computer
+Need to install pigpio, gpiozero and pygames modules.
+Also ensure that python is installed on the host computer.
+#### Python on Windows CMD
+Its also easier to use the Windows CMD to use pip. 
+To do this when installing python on the windows machine, ensure that set PATH environment variable changes are checked. 
+
+If python is already installed:
+1. Locate the python.exe on the host machine. Copy the path.
+2. Go to Control Panel and edit the system environment variables: System -> Advanced Tab -> Environmental Variables.
+3. In the System Variables or Account Variables, find the PATH Variable. If there is no PATH variable add one.
+4. When editing the PATH variable add the python.exe directory and another one with \Scripts appended to the directory path.
+5. Check if pip works in the command line by typing in pip list or python to start the python interpreter. 
+
+#### pigpio, pygames and gpiozero modules
+Install it on the host computer by using the command:
+'''
+pip instal pigpio pygames gpiozero modules
+'''
+Check all the installed python modules on the machine by using:
+'''
+pip list
+'''
+
 ### Xbox Driver:
- 
-To initilize first ensure the xbox controller driver is installed: 
+
+No longer used. The driver is only for interfacing a USB controller with a linux machine. Since all the controller interpretation is done on the host machine which is most likely a windows machine, this is now depreciated. 
+
+~~To initilize first ensure the xbox controller driver is installed:~~ 
 
 ```
 sudo apt-get install xboxdrv
 ```
 
-To test the driver use:
+~~To test the driver use:~~
 ```
 sudo xboxdrv --detach-kernel-driver
 ```
 
-Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver
+~~Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver~~
+
 
 ### PWM GPIO driver:
   
