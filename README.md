@@ -10,6 +10,7 @@ Added analog trigger control over thrusters. RT should fire both dorsal thruster
 # RoV_ThrusterControlSystem
 
 ~~main file is now rov_control_GPIO.~~ 
+
 main file is rov_control-Host which should be run on the host computer. Instructions to prepare the RPi and the host computer are detailed below. 
 
 Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
