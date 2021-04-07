@@ -67,16 +67,6 @@ def arm():
 
 #helper functions
 
-#bounding function DEPRECIATED DO NOT USE
-#desc: takes a float value between 1 to -1 and outputs an absolute int value between min and max
-#input:float between 1 to -1
-#output int value 
-def bounding(x, min_val, max_val):
-    if(x<0):
-        return min_val + int(x/-1*(max_val-min_val))
-    return min_val + int(x*(max_val-min_val))
-
-
 #desc: takes a float value between 1 to -1 and outputs an int value between min and max with zero being the mid value. This uses a linear curve to scale the float value. 
 #this function removes the use of a forward and backward thruster function infavor of a single function
 #input:float between 1 to -1, a min, max and mid value

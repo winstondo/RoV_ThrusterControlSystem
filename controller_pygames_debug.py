@@ -1,38 +1,10 @@
-#this should be run on the host computer
+import pygame
 
-import pygame 
-import os
-import time
-import pigpio
-
-
-
-
-#desc: sleeps for the argument time and outputs a countdown
-#input: interger
-#output:none 
-def CountSleep(seconds):
-  for i in range(seconds):
-    time.sleep(1)
-    print(seconds-i)
-
-
-class objThruster:
-    def __init__(self, name, pin):
-        self.name = name
-        self.pin = pin
 
 # Define some colors.
 BLACK = pygame.Color('black')
 WHITE = pygame.Color('white')
 
-#helper functions
-
-#desc: rescales values between an arbitary set of values [a,b] given the min_val and max_val
-#input: x value to be rescaled, new range values [a,b], min and max values of original 
-#output: rescaled value
-def MinMaxNormalization(x, a, b, min_val, max_val):
-    return a + (((x - min_val) * (b-a))/(max_val - min_val))
 
 # This is a simple class that will help us print to the screen.
 # It has nothing to do with the joysticks, just outputting the
@@ -140,7 +112,7 @@ while not bDone:
 
         for i in range(axes):
             axis = joystick.get_axis(i)
-            textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, MinMaxNormalization(axis,0,1,-1,1)))
+            textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis))
         textPrint.unindent()
 
         buttons = joystick.get_numbuttons()
@@ -180,8 +152,3 @@ while not bDone:
 # If you forget this line, the program will 'hang'
 # on exit if running from IDLE.
 pygame.quit()
-if __name__ == "__main__":
-    #pyblock(5)
-    ControllerBlock(5)
-    
-   
