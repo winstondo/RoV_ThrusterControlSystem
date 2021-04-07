@@ -35,7 +35,7 @@ THRUSTER_LIST = [frontThruster, backThruster, leftThruster, rightThruster]
 #throttle globals
 MAX_THROTTLE = 2000
 MIN_THROTTLE = 1000 
-NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
+NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse (units are in microseconds)
 ARMING_INTERVAL = 4 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
 
 #ESC Calibration

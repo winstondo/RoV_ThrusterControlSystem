@@ -31,6 +31,18 @@ class TextPrint(object):
         self.x -= 10
 
 
+#desc: rescales values between an arbitary set of values [a,b] given the min_val and max_val
+#input: (x) value to be rescaled, (a,b) new range values, min and max values of original 
+#output: rescaled value
+def MinMaxNormalization(x, a, b, min_val, max_val):
+    return a + (((x - min_val) * (b-a))/(max_val - min_val))
+
+#desc: clamps a value between the min_val and max_val
+#input: (x) value to be rescaled, min and max values  
+#output: clamped value
+def clamp(x, min_val, max_val):
+    return(max(min_val, min(x, max_val)))
+
 pygame.init()
 
 # Set the width and height of the screen (width, height).
@@ -110,9 +122,42 @@ while not bDone:
         textPrint.tprint(screen, "Number of axes: {}".format(axes))
         textPrint.indent()
 
-        for i in range(axes):
-            axis = joystick.get_axis(i)
-            textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis))
+        #for i in range(axes):
+            #axis = joystick.get_axis(i)
+            #textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis))
+
+        #axis designation block
+        flJoyLeftX = joystick.get_axis(0)
+        flJoyLeftY = -1 * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
+        flJoyRightX = joystick.get_axis(2)
+        flJoyRightY = -1 * joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
+        flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+        flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1) 
+
+        textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
+        textPrint.tprint(screen, "JoyLeftY is value: {:>6.3f}".format(flJoyLeftY))
+        textPrint.tprint(screen, "JoyRightX is value: {:>6.3f}".format(flJoyRightX))
+        textPrint.tprint(screen, "JoyRightY is value: {:>6.3f}".format(flJoyRightY))
+        textPrint.tprint(screen, "LeftTrigger is value: {:>6.3f}".format(flLeftTrigger))
+        textPrint.tprint(screen, "RightTrigger is value: {:>6.3f}".format(flRightTrigger))
+
+        textPrint.unindent()
+        textPrint.tprint(screen, "Thruster Output")
+        textPrint.indent()
+        #lThrust_val = MinMaxNormalization(flJoyLeftX + flJoyLeftY, -1, 1, -2, 2)
+        #rThrust_val = MinMaxNormalization(-1*flJoyLeftX + flJoyLeftY, -1, 1, -2, 2)
+        
+        lThrust_val = clamp(flJoyLeftX + flJoyLeftY, -1 ,1)
+        rThrust_val = clamp(-1*flJoyLeftX + flJoyLeftY, -1, 1)
+
+        #thruster control logic for left analog stick and diagnostic display
+
+        textPrint.tprint(screen, "{:>6.3f} input LeftThruster".format(lThrust_val))
+        textPrint.tprint(screen, "{:>6.3f} input RightThruster".format(rThrust_val))
+
+
+                
+
         textPrint.unindent()
 
         buttons = joystick.get_numbuttons()
