@@ -4,17 +4,11 @@ import pygame
 import time
 from gpiozero import Servo
 from gpiozero.pins.pigpio import PiGPIOFactory
-#import os
-#import pigpio
+
+
 
 
 #class definitions
-
-#bundles the thruster name with the pin for debugging. DEPRECATED
-#class objThruster:
-#    def __init__(self, name, pin):
-#        self.name = name
-#       self.pin = pin
 
 # This is a simple class that will help us print to the screen.
 # It has nothing to do with the joysticks, just outputting the
@@ -206,16 +200,16 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             thrusters["Left"].value = lThrust_val
             thrusters["Right"].value = rThrust_val
 
-            textPrint.tprint(screen, "{:>6.3f} input LeftThruster with pulse with: {:>6.3f}".format(lThrust_val, thrusters["Left"].pulse_width))
-            textPrint.tprint(screen, "{:>6.3f} input RightThruster with pulse with: {:>6.3f}".format(rThrust_val, thrusters["Right"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} input LeftThruster with PULSE WIDTH: {:>6.3f}".format(lThrust_val, thrusters["Left"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} input RightThruster with PULSE WIDTH: {:>6.3f}".format(rThrust_val, thrusters["Right"].pulse_width))
 
             thrusters["Front"].value = flRightTrigger
             thrusters["Back"].value = flRightTrigger
             thrusters["Front"].value = -1 * flLeftTrigger
             thrusters["Back"].value = -1 * flLeftTrigger
 
-            textPrint.tprint(screen, "FrontThruster with pulse with: {:>6.3f}".format(thrusters["Front"].pulse_width))
-            textPrint.tprint(screen, "BackThruster with pulse with: {:>6.3f}".format(thrusters["Back"].pulse_width))
+            textPrint.tprint(screen, "FrontThruster with PULSE WIDTH: {:>6.3f}".format(thrusters["Front"].pulse_width))
+            textPrint.tprint(screen, "BackThruster with PULSE WIDTH: {:>6.3f}".format(thrusters["Back"].pulse_width))
 
             textPrint.unindent()
 
