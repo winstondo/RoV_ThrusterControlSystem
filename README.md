@@ -113,17 +113,17 @@ Refer to the manufacture's website for specifications: http://www.ztwshop.com/pr
 
 ## Deprecated
 Functions or drivers that are no longer used but kept for completeness or troubleshooting.
-### Xbox Driver:
+### ~~Xbox Driver:~~
 
 No longer used. The driver is only for interfacing a USB controller with a linux machine. All the controller interpretation is done on the host machine which is most likely a windows machine this no longer works. 
 
-To initilize first ensure the xbox controller driver is installed:
+~~To initilize first ensure the xbox controller driver is installed:~~
 
 ```
 sudo apt-get install xboxdrv
 ```
 
-To test the driver use:
+~~To test the driver use:~~
 ```
 sudo xboxdrv --detach-kernel-driver
 ```
@@ -131,9 +131,8 @@ sudo xboxdrv --detach-kernel-driver
 Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver
 
 
-# Connection to Raspberry Pi via Ethernet
 
-## ~~Static IP address on the Host Computer~~
+### ~~Static IP address on the Host Computer~~
 Static IP addresses seem to give remote and ssh connection errors as well as prevents the RPi from sharing internet when directly connected to the host computer. 
 Its better to just use dynamic IP addressing and connect through normal means.
 
