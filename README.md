@@ -39,14 +39,14 @@ Also ensure that python is installed on the host computer.
 
 #### Python on Windows CMD
 Its also easier to use the Windows CMD to use pip. 
-To do this when installing python on the windows machine, ensure that set PATH environment variable changes are checked. 
+To do this when installing python on the windows machine, ensure that ```set PATH environment variable``` is checked. 
 
 If python is already installed:
 1. Locate the python.exe on the host machine. Copy the path.
 2. Go to Control Panel and edit the system environment variables: System -> Advanced Tab -> Environmental Variables.
 3. In the System Variables or Account Variables, find the PATH Variable. If there is no PATH variable add one.
 4. When editing the PATH variable add the python.exe directory and another one with \Scripts appended to the directory path.
-5. Check if pip works in the command line by typing in pip list or python to start the python interpreter. 
+5. Check if pip works in the command line by typing in ``` pip list``` or ```python``` to start the python interpreter. 
 
 #### pigpio, pygames and gpiozero modules
 Install it on the host computer by using the command:
