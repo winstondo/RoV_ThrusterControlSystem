@@ -19,7 +19,7 @@ class TextPrint(object):
         self.font = pygame.font.Font(None, 20)
 
     def tprint(self, screen, textString):
-        textBitmap = self.font.render(textString, True, WHITE)
+        textBitmap = self.font.render(textString, True, FONT_COLOR)
         screen.blit(textBitmap, (self.x, self.y))
         self.y += self.line_height
 
@@ -67,11 +67,17 @@ def CountSleep(seconds):
 def arm(arming_interval, thrusters):
     for thruster in thrusters.values():    
         print("initilizing:{} at MAX_PW".format(thruster))
-        thruster.max()
+        #thruster.max()
+        thruster.value = 1
+        print("PULSE WIDTH At:", thruster.pulse_width)
         print(arming_interval, " to turn on power now:")
         CountSleep(arming_interval)
         print("initilizing:{} at NEUTRAL".format(thruster))
-        thruster.mid()
+        #thruster.mid()
+        thruster.value = 0
+        print("PULSE WIDTH At:", thruster.pulse_width)
+        CountSleep(int(arming_interval/2))
+        thruster.value = 0
     print("Initilization process completed")
 
 #desc: Shuts down all thrusters.
@@ -85,7 +91,7 @@ def ShutDown(thrusters):
         time.sleep(0.5)
 
 # -------- Main Program Loop -----------
-#desc: This is the main program loop that pools the controller for input as well as creates the UI window. Automatically exits if the user exits the UI window.
+#desc: This is the main program loop that polls the controller for input as well as creates the UI window. Automatically exits if the user exits the UI window.
 #input: (UPS) an int value that tells the program how many times a second to poll the controller and update the UI window
 #input: (WINDOW_HEIGHT, WINDOW_WIDTH) two interger values that tells the main program how large to draw the window
 #input: (thrusters) (thrusters) dictionary of all thruster objects of the Servo class, each identified by keys ("Front","Left", etc)
@@ -130,7 +136,7 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
         #
         # First, clear the screen to white. Don't put other drawing commands
         # above this, or they will be erased with this command.
-        screen.fill(BLACK)
+        screen.fill(SCREEN_BACKGROUND_COLOR)
         textPrint.reset()
 
         # Get count of joysticks.
@@ -178,7 +184,7 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             flJoyLeftX = joystick.get_axis(0)
             flJoyLeftY = -1 * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
             flJoyRightX = joystick.get_axis(2)
-            flJoyRightY = -1 * joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted because stupid 
+            flJoyRightY = -1*joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted because stupid 
             flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
             flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1) 
 
@@ -193,23 +199,30 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             #somewhat inelegant, can be improved
             lThrust_val = clamp(flJoyLeftX + flJoyLeftY, -1, 1)
             rThrust_val = clamp(-1*flJoyLeftX + flJoyLeftY, -1, 1)
-            
+            #lThrust_val = flJoyLeftX
+            #rThrust_val = flJoyLeftX
 
             #thruster control logic for left analog stick and diagnostic display
 
-            thrusters["Left"].value = lThrust_val
+            thrusters["Left"].value = -1*lThrust_val
             thrusters["Right"].value = rThrust_val
 
-            textPrint.tprint(screen, "{:>6.3f} input LeftThruster with PULSE WIDTH: {:>6.3f}".format(lThrust_val, thrusters["Left"].pulse_width))
-            textPrint.tprint(screen, "{:>6.3f} input RightThruster with PULSE WIDTH: {:>6.3f}".format(rThrust_val, thrusters["Right"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} input -> LeftThruster with PULSE WIDTH: {:>6.5f}".format(-1*lThrust_val, thrusters["Left"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} input -> RightThruster with PULSE WIDTH: {:>6.5f}".format(rThrust_val, thrusters["Right"].pulse_width))
 
-            thrusters["Front"].value = flRightTrigger
-            thrusters["Back"].value = flRightTrigger
-            thrusters["Front"].value = -1 * flLeftTrigger
-            thrusters["Back"].value = -1 * flLeftTrigger
+            
+            fwrd_val = flRightTrigger
+            bck_val = flLeftTrigger 
+            
 
-            textPrint.tprint(screen, "FrontThruster with PULSE WIDTH: {:>6.3f}".format(thrusters["Front"].pulse_width))
-            textPrint.tprint(screen, "BackThruster with PULSE WIDTH: {:>6.3f}".format(thrusters["Back"].pulse_width))
+            #compensates for the wiring
+            thrusters["Front"].value = -1 * fwrd_val
+            thrusters["Back"].value = fwrd_val
+            thrusters["Front"].value = bck_val
+            thrusters["Back"].value = -1 * bck_val
+
+            textPrint.tprint(screen, "{:>6.3f} -> FrontThruster with PULSE WIDTH: {:>6.3f}".format(fwrd_val, thrusters["Front"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} -> BackThruster with PULSE WIDTH: {:>6.3f}".format(bck_val, thrusters["Back"].pulse_width))
 
             textPrint.unindent()
 
@@ -252,48 +265,56 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
     pygame.quit()
 
 
+#desc: This function connects the thrusters with the RPs GPIO Remotely
+#input: (hostname) This is the RPi's hostname but can also be an IP address. Ensure that remoteGPIO is configured on on the RPi
+#input: (i...TPin) int values that the thrusters are connected to. thrusters are always in FBLR order
+#output: a dictionary of thruster objects. call the thruster objects by their key ["Front"], etc
+def ConnectToNetworkGPIO(hostname,iFrontTPin, iBackTPin, iLeftTPin, iRightPin):
+    remote_host = PiGPIOFactory(host=hostname) #sets the pinfactory which enables networking features. This class can take IP addresses, but host names are more constant.
+
+    #pulse width units for the Servo class are in seconds, below are the default values
+    #Servo(pin, *, initial_value=0, min_pulse_width=1/1000, max_pulse_width=2/1000, frame_width=20/1000, pin_factory=None)
+
+    objFrontThruster = Servo(iFrontTPin, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
+    objBackThruster = Servo(iBackTPin, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
+    objLeftThruster = Servo(iLeftTPin, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
+    objRightThruster = Servo(iRightPin, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
+
+    #dictionary of thruster servo objects
+    thrusters = {
+        "Front": objFrontThruster,
+        "Back": objBackThruster,
+        "Left": objLeftThruster,
+        "Right": objRightThruster    
+    }
+    return thrusters
 
 
 if __name__ == "__main__":
     #global variables
 
     # Color scheme for UI window
-    BLACK = pygame.Color('black')
-    WHITE = pygame.Color('white')
+    SCREEN_BACKGROUND_COLOR = pygame.Color('black')
+    FONT_COLOR = pygame.Color('white')
     #UI window dimentions in pixels
-    WINDOW_HEIGHT = 700
-    WINDOW_WIDTH = 500
+    WINDOW_HEIGHT = 600
+    WINDOW_WIDTH = 600
     #Pulse Width (units in s)
     MAX_PW = 2E-3
     MIN_PW = 1E-3 
     #FRAME_WIDTH = 20E-3   #The length of time between servo control pulses measured in seconds. Using defaults of 20ms which is a common value for servos.
     #NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
-    ARMING_INTERVAL = 4 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
+    ARMING_INTERVAL = 2 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
 
-    remote_host = PiGPIOFactory(host="raspberrypi") #sets the pinfactory which enables networking features. This class can take IP addresses, but host names are more constant.
 
-    #pulse width units for the Servo class are in seconds, below are the default values
-    #Servo(pin, *, initial_value=0, min_pulse_width=1/1000, max_pulse_width=2/1000, frame_width=20/1000, pin_factory=None)
-
-    objFrontThruster = Servo(11, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
-    objBackThruster = Servo(13, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
-    objLeftThruster = Servo(17, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
-    objRightThruster = Servo(27, min_pulse_width=MIN_PW, max_pulse_width=MAX_PW, pin_factory=remote_host)
-
-    #dictionary of thruster servo objects
-    THRUSTERS = {
-        "Front": objFrontThruster,
-        "Back": objBackThruster,
-        "Left": objLeftThruster,
-        "Right": objRightThruster    
-    } 
-
+    #=======================================================
+    THRUSTERS = ConnectToNetworkGPIO("raspberrypi", 17, 27, 22, 23)
 
     
-
     try:
         arm(ARMING_INTERVAL, THRUSTERS)
-        MainControlLoop(20, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
+        MainControlLoop(60, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
+        ShutDown(THRUSTERS)
 
     except KeyboardInterrupt:
         print("program inturrupted... exiting")

@@ -1,11 +1,27 @@
+## Patch 2.1:
+- Corrected thruster control logic
+- Remote GPIO connection scheme to its own function
+
+
 ## Patch 2.0:
-Implemented new controller API: pygames. Allows Windows host computer to interpret controller input as well as drawing a diagnostic UI.
-Implemented GPIOZero for remote GPIO. Allows the host computer to control the RPis GPIO remotely. 
-Improved thruster software logic should iron out dead zone issues.
+- Implemented new controller API: pygames. Allows Windows host computer to interpret controller input as well as drawing a diagnostic UI.
+- Implemented GPIOZero for remote GPIO. Allows the host computer to control the RPis GPIO remotely. 
+- Improved thruster software logic should iron out dead zone issues.
 
 ## Patch 1.0:
-Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the RoV accend. LT should cause the craft to decend.
+- Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the ROV accend. LT should cause the craft to decend.
 
+## Current Issues:
+
+~~Left thruster is wired backwards~~  Corrected through software
+
+UI shows the raw values from the thrusters but does not match of with logicical steering behavior.
+
+ASCEND and DESCEND control issues: thursters will not fire at full correct values with triggers. 
+
+
+
+Further testing with all four thrusters.
 
 # RoV_ThrusterControlSystem
 
@@ -94,12 +110,6 @@ The arm() function in the python code should take care of all the ESC calibratio
 
 Refer to the manufacture's website for specifications: http://www.ztwshop.com/product/shark-brushless-esc-for-rc-boat/ztw-shark-40A-bec-for-rc-boat.html
 
-## Current Issues:
-  
-~~The analog stick is too sensitive and does not adequetly send out a consistant signal to the ESC, which causes the thrusters to stop firing if the analog stick is not in the ~~ appropriate dead zone. Some interpolation is needed to smooth this out.~~
-Initilization takes forever and can be shortend.
-
-Further testing with all four thrusters.
 
 ## Deprecated
 Functions or drivers that are no longer used but kept for completeness or troubleshooting.
