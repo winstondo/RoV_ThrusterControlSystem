@@ -133,26 +133,27 @@ Refer to https://github.com/FRC4564/Xbox for more info on the xbox driver
 
 # Connection to Raspberry Pi via Ethernet
 
-## Static IP address on the Host Computer
+## ~~Static IP address on the Host Computer~~
+Static IP addresses seem to give remote and ssh connection errors as well as prevents the RPi from sharing internet when directly connected to the host computer. 
+Its better to just use dynamic IP addressing and connect through normal means.
 
-
-First establish a static IPv4 address on the host computer via the network configuration on the Control Panel.
-Make the IP address something memorable but the default is **192.168.1.1**.
+~~First establish a static IPv4 address on the host computer via the network configuration on the Control Panel.
+Make the IP address something memorable but the default is **192.168.1.1**.~~
 
 
 ## DHCP Server
-Install the DHCP server software:
-http://www.dhcpserver.de/cms/download/
 
-DHCP will automatically assign IP addressesses to your PI: default is **192.168.1.2-4**
+~~Install the DHCP server software:
+http://www.dhcpserver.de/cms/download/~~
 
-Do not have the IP adresses range collide with the currently set static IP address.
+~~DHCP will automatically assign IP addressesses to your PI: default is **192.168.1.2-4**~~
 
-Configure the DHCP server software by giving it the range of IP adresses. Ensure the range should be small considering only one pi is connected at a time. 
-=======
+~~Do not have the IP adresses range collide with the currently set static IP address.~~
+
+~~Configure the DHCP server software by giving it the range of IP adresses. Ensure the range should be small considering only one pi is connected at a time. 
 DHCP will automatically assign IP addressesses to your PI: default is 192.168.1.2-4
 Do not have the IP adress range collide with the currently set static IP address
-Configure the DHCP server software by giving it the range of IP adresses. Ensure the range of small considering only one pi is connected at a time. 
+Configure the DHCP server software by giving it the range of IP adresses. Ensure the range of small considering only one pi is connected at a time.~~ 
 
 
 ## Connection:
