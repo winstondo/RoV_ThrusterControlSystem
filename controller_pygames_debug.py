@@ -5,6 +5,8 @@ import pygame
 BLACK = pygame.Color('black')
 WHITE = pygame.Color('white')
 
+#config vars
+isINVERTED = False
 
 # This is a simple class that will help us print to the screen.
 # It has nothing to do with the joysticks, just outputting the
@@ -34,8 +36,8 @@ class TextPrint(object):
 #desc: rescales values between an arbitary set of values [a,b] given the min_val and max_val
 #input: (x) value to be rescaled, (a,b) new range values, min and max values of original 
 #output: rescaled value
-def MinMaxNormalization(x, a, b, min_val, max_val):
-    return a + (((x - min_val) * (b-a))/(max_val - min_val))
+def MinMaxNormalization(x, a, b, min_x, max_x):
+    return a + (((x - min_x) * (b-a))/(max_x - min_x))
 
 #desc: clamps a value between the min_val and max_val
 #input: (x) value to be rescaled, min and max values  
@@ -61,6 +63,7 @@ pygame.joystick.init()
 
 # Get ready to print.
 textPrint = TextPrint()
+isFirstInstance = True 
 
 # -------- Main Program Loop -----------
 while not bDone:
@@ -125,27 +128,37 @@ while not bDone:
         #for i in range(axes):
             #axis = joystick.get_axis(i)
             #textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis))
+        
+           
+
+        if (isFirstInstance):
+            firstLeftTrigger = MinMaxNormalization(joystick.get_axis(4),0,1,-1,1)
+            firstRightTrigger = joystick.get_axis(5)
+            isFirstInstance = False
 
         #axis designation block
         flJoyLeftX = joystick.get_axis(0)
-        flJoyLeftY = -1 * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
+        flJoyLeftY =  (-1,1)[isINVERTED] * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
         flJoyRightX = joystick.get_axis(2)
-        flJoyRightY = -1 * joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
-        flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
-        flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1) 
+        flJoyRightY = (-1,1)[isINVERTED] * joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
+        flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 0.992) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+        flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 0.992) 
+        flLeftTriggerRaw = joystick.get_axis(4)
+        flRightTriggerRaw = joystick.get_axis(5)
 
         textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
         textPrint.tprint(screen, "JoyLeftY is value: {:>6.3f}".format(flJoyLeftY))
         textPrint.tprint(screen, "JoyRightX is value: {:>6.3f}".format(flJoyRightX))
         textPrint.tprint(screen, "JoyRightY is value: {:>6.3f}".format(flJoyRightY))
         textPrint.tprint(screen, "LeftTrigger is value: {:>6.3f}".format(flLeftTrigger))
+        textPrint.tprint(screen, "Raw LeftTrigger is value: {:>6.3f}".format(flLeftTriggerRaw))
         textPrint.tprint(screen, "RightTrigger is value: {:>6.3f}".format(flRightTrigger))
+        textPrint.tprint(screen, "Raw RightTrigger is value: {:>6.3f}".format(flRightTriggerRaw))
 
         textPrint.unindent()
         textPrint.tprint(screen, "Thruster Output")
         textPrint.indent()
-        #lThrust_val = MinMaxNormalization(flJoyLeftX + flJoyLeftY, -1, 1, -2, 2)
-        #rThrust_val = MinMaxNormalization(-1*flJoyLeftX + flJoyLeftY, -1, 1, -2, 2)
+
         
         lThrust_val = clamp(flJoyLeftX + flJoyLeftY, -1 ,1)
         rThrust_val = clamp(-1*flJoyLeftX + flJoyLeftY, -1, 1)
@@ -155,8 +168,11 @@ while not bDone:
         textPrint.tprint(screen, "{:>6.3f} input LeftThruster".format(lThrust_val))
         textPrint.tprint(screen, "{:>6.3f} input RightThruster".format(rThrust_val))
 
-
-                
+        textPrint.unindent()
+        textPrint.tprint(screen, "First Trigger Values")
+        textPrint.indent()
+        textPrint.tprint(screen, "First instance value of LeftTrigger with MinMaxNorm@(0,1) {}".format(firstLeftTrigger))
+        textPrint.tprint(screen, "First instance value of RightTrigger {}".format(firstRightTrigger))        
 
         textPrint.unindent()
 

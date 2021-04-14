@@ -1,3 +1,7 @@
+#DEPRECATED DO NOT USE
+#this programe is no longer used. It can be used to locally control the ROV through an xbox controller without being connected to a host computer
+
+
 from __future__ import print_function
 import xbox
 import os

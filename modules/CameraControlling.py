@@ -6,7 +6,7 @@ global permit  #semiphore to prevent setupt on the
 permit = True
 
 def CamController(arg1):
-    global camera
+    global camera 
     global permit
     if arg1.Y(): # calls on xbox.py to check button press: 0 -> false, 1 -> true
         print("camera button was pressed")

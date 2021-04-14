@@ -1,4 +1,8 @@
-#this should be run on the host computer
+#ROV Team K
+#Winston Do
+
+#program disc: this should be run on the host computer. it interprets input from the xbox controller and controls the ROV through the ethernet cable
+#UI partially based on https://www.pygame.org/docs/ref/joystick.html
 
 import pygame 
 import time
@@ -185,8 +189,9 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             flJoyLeftY = -1 * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
             flJoyRightX = joystick.get_axis(2)
             flJoyRightY = -1*joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted because stupid 
-            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
-            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1) 
+            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 0.992) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 0.992) #should correct trigger values to ranges [0,1]
+            
 
             textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
             textPrint.tprint(screen, "JoyLeftY is value: {:>6.3f}".format(flJoyLeftY))
@@ -291,7 +296,7 @@ def ConnectToNetworkGPIO(hostname,iFrontTPin, iBackTPin, iLeftTPin, iRightPin):
 
 
 if __name__ == "__main__":
-    #global variables
+    #config variables
 
     # Color scheme for UI window
     SCREEN_BACKGROUND_COLOR = pygame.Color('black')

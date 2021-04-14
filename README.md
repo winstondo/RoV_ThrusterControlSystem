@@ -1,3 +1,6 @@
+## Patch 2.1.1:
+- Corrected ASCEND and DESCEND control issues: thursters will correctly fire at full when triggers are fully depressed
+
 ## Patch 2.1:
 - Corrected thruster control logic
 - Remote GPIO connection scheme to its own function
@@ -17,11 +20,17 @@
 
 UI shows the raw values from the thrusters but does not match of with logicical steering behavior.
 
-ASCEND and DESCEND control issues: thursters will not fire at full correct values with triggers. 
+
+
+~~ASCEND and DESCEND control issues: thursters will not fire at full correct values with triggers.~~ Patch 2.1.1 corrected
+
+Upon initial startup, the inital values of the triggers from the controller will not be zero but at half input. 
+This causes the initial values of the dorsal thrusters to be set at 50% upon starting. 
+This can corrected by quickly pulsing either trigger once the ROV has finished initializing, but it is still worth fixing through software.
 
 
 
-Further testing with all four thrusters.
+
 
 # RoV_ThrusterControlSystem
 
