@@ -8,7 +8,7 @@ import pygame
 import time
 from gpiozero import Servo
 from gpiozero.pins.pigpio import PiGPIOFactory
-
+from multiprocessing import Process #for simultaneous thruster arming
 
 
 
@@ -93,6 +93,41 @@ def ShutDown(thrusters):
         print("shutting off: {}".format(thruster))
         thruster.mid()
         time.sleep(0.5)
+
+
+#desc: Arms the given thruster and outputs a diagnostic message
+#input:(arming_interval) time the arming function waits between oscillating between the thrusters neutral and max pulse width for ESC calibration
+#input: (thruster) thruster to be armed
+#output: none
+def armThruster(arming_interval, thruster):
+    print("initialilzing: {} at {}".format(thruster, thruster.pulse_width))
+    thruster.max()
+    print(arming_interval, " to turn on power now:")
+    CountSleep(arming_interval)
+    print("throttling out: {} at {}".format(thruster, thruster.pulse_width))
+    thruster.mid()
+
+#desc: Arms each thruster on the craft simultaneously. Depends on the multiprocessing module
+#input:(arming_interval) time the arming function waits between oscillating between the thrusters neutral and max pulse width for ESC calibration
+#input: (thrusters) dictionary of all thruster objects of the Servo class, each identified by keys ("Front","Left", etc)
+#output: none
+def armMultiProcess(arming_interval, thrusters):
+    #for thruster in thrusters.values():    
+    ProcessArmF = Process(target=armThruster, args=(arming_interval, thrusters['Front']))
+    ProcessArmF.start()
+    ProcessArmB = Process(target=armThruster, args=(arming_interval, thrusters['Back']))
+    ProcessArmB.start()
+    ProcessArmL = Process(target=armThruster, args=(arming_interval, thrusters['Left']))
+    ProcessArmL.start()
+    ProcessArmR = Process(target=armThruster, args=(arming_interval, thrusters['Right']))
+    ProcessArmR.start()
+
+    ProcessArmF.join()
+    ProcessArmB.join()
+    ProcessArmL.join()
+    ProcessArmR.join()
+    print("Multi Process initilization process completed")
+
 
 # -------- Main Program Loop -----------
 #desc: This is the main program loop that polls the controller for input as well as creates the UI window. Automatically exits if the user exits the UI window.
@@ -186,11 +221,11 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             
             #axis designation block
             flJoyLeftX = joystick.get_axis(0)
-            flJoyLeftY = -1 * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
+            flJoyLeftY =  -1*joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
             flJoyRightX = joystick.get_axis(2)
             flJoyRightY = -1*joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted because stupid 
-            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 0.992) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
-            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 0.992) #should correct trigger values to ranges [0,1]
+            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1.004) #should correct trigger values to ranges [0,1] unless a button is pressed then the thing over normalizes
             
 
             textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
@@ -209,8 +244,8 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
 
             #thruster control logic for left analog stick and diagnostic display
 
-            thrusters["Left"].value = -1*lThrust_val
-            thrusters["Right"].value = rThrust_val
+            thrusters["Left"].value = lThrust_val
+            thrusters["Right"].value = -1*rThrust_val
 
             textPrint.tprint(screen, "{:>6.3f} input -> LeftThruster with PULSE WIDTH: {:>6.5f}".format(-1*lThrust_val, thrusters["Left"].pulse_width))
             textPrint.tprint(screen, "{:>6.3f} input -> RightThruster with PULSE WIDTH: {:>6.5f}".format(rThrust_val, thrusters["Right"].pulse_width))
@@ -272,10 +307,11 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
 
 #desc: This function connects the thrusters with the RPs GPIO Remotely
 #input: (hostname) This is the RPi's hostname but can also be an IP address. Ensure that remoteGPIO is configured on on the RPi
-#input: (i...TPin) int values that the thrusters are connected to. thrusters are always in FBLR order
+#input: (i...TPin) int values that the thrusters are connected to. thrusters are always in FBLR order and ins are in GP.BCM mode
 #output: a dictionary of thruster objects. call the thruster objects by their key ["Front"], etc
 def ConnectToNetworkGPIO(hostname,iFrontTPin, iBackTPin, iLeftTPin, iRightPin):
-    remote_host = PiGPIOFactory(host=hostname) #sets the pinfactory which enables networking features. This class can take IP addresses, but host names are more constant.
+    #sets the pinfactory which enables networking features. This class can take IP addresses, but host names are more constant.
+    remote_host = PiGPIOFactory(host=hostname) 
 
     #pulse width units for the Servo class are in seconds, below are the default values
     #Servo(pin, *, initial_value=0, min_pulse_width=1/1000, max_pulse_width=2/1000, frame_width=20/1000, pin_factory=None)
@@ -317,7 +353,9 @@ if __name__ == "__main__":
 
     
     try:
+        
         arm(ARMING_INTERVAL, THRUSTERS)
+        #armMultiProcess(ARMING_INTERVAL, THRUSTERS)
         MainControlLoop(60, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
         ShutDown(THRUSTERS)
 

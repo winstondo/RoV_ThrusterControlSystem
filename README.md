@@ -1,5 +1,7 @@
 ## Patch 2.1.1:
-- Corrected ASCEND and DESCEND control issues: thursters will correctly fire at full when triggers are fully depressed
+- ~~Corrected ASCEND and DESCEND control issues: thursters will correctly fire at full when triggers are fully depressed~~ 
+- Reverted: controller corrects deadzone once a random button has been preseed. Right trigger still does not function correctly. Adjust the minmax bounds.
+
 
 ## Patch 2.1:
 - Corrected thruster control logic

@@ -75,10 +75,10 @@ while not bDone:
     for event in pygame.event.get(): # User did something.
         if event.type == pygame.QUIT: # Triggered if window is closed
             bDone = True # Flag that we are done so we exit this loop.
-        elif event.type == pygame.JOYBUTTONDOWN:
-            print("Joystick button pressed.")
-        elif event.type == pygame.JOYBUTTONUP:
-            print("Joystick button released.")
+        #elif event.type == pygame.JOYBUTTONDOWN:
+            #print("Joystick button pressed.")
+        #elif event.type == pygame.JOYBUTTONUP:
+            #print("Joystick button released.")
 
     #
     # DRAWING STEP
@@ -141,8 +141,8 @@ while not bDone:
         flJoyLeftY =  (-1,1)[isINVERTED] * joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
         flJoyRightX = joystick.get_axis(2)
         flJoyRightY = (-1,1)[isINVERTED] * joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
-        flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 0.992) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
-        flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 0.992) 
+        flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+        flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1) 
         flLeftTriggerRaw = joystick.get_axis(4)
         flRightTriggerRaw = joystick.get_axis(5)
 
@@ -165,8 +165,33 @@ while not bDone:
 
         #thruster control logic for left analog stick and diagnostic display
 
+
         textPrint.tprint(screen, "{:>6.3f} input LeftThruster".format(lThrust_val))
         textPrint.tprint(screen, "{:>6.3f} input RightThruster".format(rThrust_val))
+        #somewhat inelegant, can be improved
+         
+
+        #thruster control logic for left analog stick and diagnostic display
+
+        lThrusterOutput = -1*lThrust_val
+        rThrusterOutput = rThrust_val
+
+        textPrint.tprint(screen, "{:>6.3f} input -> LeftThruster with Output: {:>6.5f}".format(lThrust_val, lThrusterOutput))
+        textPrint.tprint(screen, "{:>6.3f} input -> RightThruster with Output: {:>6.5f}".format(rThrust_val, rThrusterOutput))
+
+            
+        fwrd_val = flRightTrigger
+        bck_val = flLeftTrigger 
+            
+
+        #compensates for the wiring
+        fThruster = -1 * fwrd_val
+        bThruster = fwrd_val
+        fThruster = bck_val
+        bThruster = -1 * bck_val
+
+        textPrint.tprint(screen, "{:>6.3f} -> FrontThruster with Out: {:>6.3f}".format(fwrd_val, fThruster))
+        textPrint.tprint(screen, "{:>6.3f} -> BackThruster with Out: {:>6.3f}".format(bck_val, bThruster))
 
         textPrint.unindent()
         textPrint.tprint(screen, "First Trigger Values")
@@ -207,7 +232,7 @@ while not bDone:
     pygame.display.flip()
 
     # Limit to 20 frames per second.
-    clock.tick(20)
+    clock.tick(60)
 
 # Close the window and quit.
 # If you forget this line, the program will 'hang'

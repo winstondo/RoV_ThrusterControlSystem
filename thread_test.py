@@ -1,6 +1,7 @@
 # single_threaded.py
 import time
 from threading import Thread
+from multiprocessing import Pool
 
 COUNT = 50000000
 
@@ -26,12 +27,25 @@ def MultiThread():
     print(end - start, 's to execute code in multi threaded mode')
 
 
+def MultiProcessing():
+    pool = Pool(processes=2)
+    start = time.time()
+    r1 = pool.apply_async(countdown, [COUNT//2])
+    r2 = pool.apply_async(countdown, [COUNT//2])
+    pool.close()
+    pool.join()
+    end = time.time()
+    print(end - start, 's to execute code in multi processing mode')
+
+
+
 def main():
     SingleThread()
     MultiThread()
-
+    MultiProcessing()
 
 if __name__ == "__main__":
     main()
 
 
+    
