@@ -16,22 +16,10 @@
 ## Patch 1.0:
 - Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the ROV accend. LT should cause the craft to decend.
 
-## Current Issues:
+## To Do:
 
-~~Left thruster is wired backwards~~  Corrected through software
-
-UI shows the raw values from the thrusters but does not match of with logicical steering behavior.
-
-
-
-~~ASCEND and DESCEND control issues: thursters will not fire at full correct values with triggers.~~ Patch 2.1.1 corrected
-
-Upon initial startup, the inital values of the triggers from the controller will not be zero but at half input. 
-This causes the initial values of the dorsal thrusters to be set at 50% upon starting. 
-This can corrected by quickly pulsing either trigger once the ROV has finished initializing, but it is still worth fixing through software.
-
-
-
+ - Fix UI. 
+ - Fix triggers.
 
 
 # RoV_ThrusterControlSystem
