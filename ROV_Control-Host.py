@@ -10,6 +10,7 @@ from gpiozero import Servo
 from gpiozero.pins.pigpio import PiGPIOFactory
 from multiprocessing import Process #for simultaneous thruster arming
 
+from threading import Thread #not true parralism but the application is I/O bound so concurrancy sho
 
 
 #class definitions
@@ -128,6 +129,27 @@ def armMultiProcess(arming_interval, thrusters):
     ProcessArmR.join()
     print("Multi Process initilization process completed")
 
+#desc: Arms each thruster on the craft simultaneously. Depends on the multiprocessing module
+#input:(arming_interval) time the arming function waits between oscillating between the thrusters neutral and max pulse width for ESC calibration
+#input: (thrusters) dictionary of all thruster objects of the Servo class, each identified by keys ("Front","Left", etc)
+#output: none
+def armMultiThreaded(arming_interval, thrusters):
+    #for thruster in thrusters.values():    
+    ThreadArmF = Thread(target=armThruster, args=(arming_interval, thrusters['Front']))
+    ThreadArmF.start()
+    ThreadArmB = Thread(target=armThruster, args=(arming_interval, thrusters['Back']))
+    ThreadArmB.start()
+    ThreadArmL = Thread(target=armThruster, args=(arming_interval, thrusters['Left']))
+    ThreadArmL.start()
+    ThreadArmR = Thread(target=armThruster, args=(arming_interval, thrusters['Right']))
+    ThreadArmR.start()
+
+    ThreadArmF.join()
+    ThreadArmB.join()
+    ThreadArmL.join()
+    ThreadArmR.join()
+    print("Multithreaded initilization process completed")
+
 
 # -------- Main Program Loop -----------
 #desc: This is the main program loop that polls the controller for input as well as creates the UI window. Automatically exits if the user exits the UI window.
@@ -224,8 +246,8 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             flJoyLeftY =  -1*joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
             flJoyRightX = joystick.get_axis(2)
             flJoyRightY = -1*joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted because stupid 
-            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0, 1, -1, 1) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
-            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0, 1, -1, 1.004) #should correct trigger values to ranges [0,1] unless a button is pressed then the thing over normalizes
+            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0.0, 1.0, -1.0, 1.0) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0.0, 1.0, -1.0, 1.0) #should correct trigger values to ranges [0,1] unless a button is pressed then the thing over normalizes
             
 
             textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
@@ -307,9 +329,10 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
 
 #desc: This function connects the thrusters with the RPs GPIO Remotely
 #input: (hostname) This is the RPi's hostname but can also be an IP address. Ensure that remoteGPIO is configured on on the RPi
+#input: (min_pw, max_pw) range of pulse width modulation variables in seconds
 #input: (i...TPin) int values that the thrusters are connected to. thrusters are always in FBLR order and ins are in GP.BCM mode
 #output: a dictionary of thruster objects. call the thruster objects by their key ["Front"], etc
-def ConnectToNetworkGPIO(hostname,iFrontTPin, iBackTPin, iLeftTPin, iRightPin):
+def ConnectToNetworkGPIO(hostname, MIN_PW, MAX_PW, iFrontTPin, iBackTPin, iLeftTPin, iRightPin):
     #sets the pinfactory which enables networking features. This class can take IP addresses, but host names are more constant.
     remote_host = PiGPIOFactory(host=hostname) 
 
@@ -349,13 +372,14 @@ if __name__ == "__main__":
 
 
     #=======================================================
-    THRUSTERS = ConnectToNetworkGPIO("raspberrypi", 17, 27, 22, 23)
+    THRUSTERS = ConnectToNetworkGPIO("raspberrypi", MIN_PW, MAX_PW, 17, 27, 22, 23)
 
     
     try:
         
-        arm(ARMING_INTERVAL, THRUSTERS)
+        #arm(ARMING_INTERVAL, THRUSTERS)
         #armMultiProcess(ARMING_INTERVAL, THRUSTERS)
+        armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
         MainControlLoop(60, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
         ShutDown(THRUSTERS)
 

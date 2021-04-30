@@ -39,10 +39,18 @@ def MultiProcessing():
 
 
 
+def test(n):
+    for i in range(int(n)):
+        print("===========================Starting test", i+1 , "============================")
+        SingleThread()
+        MultiThread()
+        MultiProcessing()
+        print("===========================test", i+1 , "complete============================")
+
 def main():
-    SingleThread()
-    MultiThread()
-    MultiProcessing()
+    x = input("Enter # of times to run speed tests: ")
+    test(x)
+
 
 if __name__ == "__main__":
     main()
