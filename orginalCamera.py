@@ -24,10 +24,11 @@ class myThread (threading.Thread):
         camA = Capture()
         
         camA.main()
+        print("stopping camera thread")
 
 class Capture(object):
     def __init__(self):
-        self.size = (640,480)
+        self.size = (1280,720)
         # create a display surface. standard pygame stuff
         self.display = pygame.display.set_mode(self.size, 0)
 
@@ -54,23 +55,25 @@ class Capture(object):
         pygame.display.flip()
 
     def main(self):
-        pygame.joystick.init()
+        #pygame.joystick.init()
         going = True
         print("starting live feed")
-
+        time.sleep(2)
         while going:
             #event = pygame.event.get()
+
             for event in pygame.event.get(): # User did something.
-                print("in for loop")
-                if event.type == pygame.QUIT or event.type == pygame.JOYBUTTONDOWN: # If user clicked close.
+                #print("in for loop")
+                if (event.type == pygame.QUIT or event.type == pygame.JOYBUTTONDOWN or
+                event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):# If user clicked close.
                     print("closing camera")
                     going = False # Flag that we are done so we exit this loop.
                     self.cam.stop()
-
             if(going):
                 self.get_and_flip()
+        
             
-            
+os.environ["DISPLAY"]= ":0"            
 # gpio being set up for i2c interface
 gp.setwarnings(False)
 gp.setmode(gp.BOARD)
@@ -102,18 +105,17 @@ pygame.camera.init()
 #joy = xbox.Joystick() # joy object for our xbox 360 camera
 
 
-camera = 0# O will be cam a and 1 will be cam b
+camera = 1# O will be cam a and 1 will be cam b
 permit = False #semiphore to prevent setupt on the
 done  = False
+
+#print(threading.enumerate())
 while(not done):
+
     for event in pygame.event.get(): # User did something.
         if event.type == pygame.QUIT: # If user clicked close.
             print("closing")
-            done = True # Flag that we are done so we exit this loop.
-        elif event.type == pygame.JOYBUTTONDOWN:
-            print("Joystick button pressed.")
-        elif event.type == pygame.JOYBUTTONUP:
-            print("Joystick button released.")    
+            done = True # Flag that we are done so we exit this loop.   
     joystick_count = pygame.joystick.get_count()
     for i in range(joystick_count):
         joystick = pygame.joystick.Joystick(i)
@@ -154,6 +156,33 @@ while(not done):
             elif camera ==1:
                 camera =0
                 permit =True
+    #print("looping main")
+
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                print('No modifier keys were in a pressed state when this '
+                   'event occurred.')
+                print("camera button was pressed")
+                time.sleep(.4) #rebounding on button press
+                if camera == 0:
+                    camera = 1
+                    permit = True
+                #cmd = "raspistill -t 1"
+                #os.system(cmd)
+
+                elif camera ==1:
+                    camera =0
+                    permit =True
+    #print("looping main")
+
+
+
+
+
+
+
+
 
     if permit == True: # condition will check if to change camera
         print("changing camera to ")
@@ -165,8 +194,19 @@ while(not done):
             gp.output(11, False)
             gp.output(12, True)
             print("Camera A")
+
+            
+            #print("starting camera thread.... ")
+            #if(threadB.isAlive()):
+            #    print("but camera A on.... ")
+            #    threadB.join(1)
+            #    print("camera A off ")
+           
+            #print(threading.enumerate())
+
             threadA = myThread(1,"Camera A", 1)
             threadA.start()
+            #print(threading.enumerate())
             #cmd = "raspistill -p 10,10,852,480 -t 1800000  -k &" # will time after 30 min
             #os.system(cmd)
 
@@ -178,11 +218,19 @@ while(not done):
             gp.output(11, True)
             gp.output(12, False)
             print("camera B")
-            camB = Capture()
-        
-            camB.main()
-            print("closed camera B")
-            #cmd = "raspistill -p 10,10,852,480 -t 1800000 -k &"
+            
+            #print("starting camera thread... ")
+            #if(threadA.isAlive()):
+            #    print("but wainting for camera A thread to rejoind... ")
+            #    threadA.join(1)
+            #    print("camera a closed")
+            #if(threading.activeCount() >1):
+             #   print("waiting to close")
+            #    time.sleep(2)
+            threadB = myThread(2,"Camera b", 1)
+            threadB.start()
+            
+            #cmd = "raspistill -p 10,10,852,480 -t 1800000 -k &"S
             #os.system(cmd)
 #                 to end current camera process, press key k then key enter
 #                 then press the y button to swap camera

@@ -1,27 +1,18 @@
 """ Xbox 360 controller support for Python
 11/9/13 - Steven Jacobs
-
 This class module supports reading a connected Xbox controller under Python 2 and 3.
-
 You'll need to first install xboxdrv:
-
     sudo apt-get install xboxdrv
-
 See http://pingus.seul.org/~grumbel/xboxdrv/ for details on xboxdrv
-
 Example usage:
-
     import xbox
     joy = xbox.Joystick()         #Initialize joystick
-    
     if joy.A():                   #Test state of the A button (1=pressed, 0=not pressed)
         print 'A button pressed'
     x_axis   = joy.leftX()        #X-axis of the left stick (values -1.0 to 1.0)
     (x,y)    = joy.leftStick()    #Returns tuple containing left X and Y axes (values -1.0 to 1.0)
     trigger  = joy.rightTrigger() #Right trigger position (values 0 to 1.0)
-    
     joy.close()                   #Cleanup before exit
-
 All controller buttons are supported.  See code for all functions.
 """
 
@@ -36,7 +27,6 @@ class Joystick:
     The refreshRate determines the maximnum rate at which events are polled from xboxdrv.
     Calling any of the Joystick methods will cause a refresh to occur, if refreshTime has elapsed.
     Routinely call a Joystick method, at least once per second, to avoid overfilling the event buffer.
- 
     Usage:
         joy = xbox.Joystick()
     """
@@ -91,7 +81,7 @@ class Joystick:
                     if len(response) == 0:
                         raise IOError('Xbox controller disconnected from USB')
                     readable, writeable, exception = select.select([self.pipe],[],[],0)
-                # Valid controller response will be 140 chars.  
+                # Valid controller response will be 140 chars.
                 if len(response) == 140:
                     self.connectStatus = True
                     self.reading = response
@@ -103,7 +93,6 @@ class Joystick:
     controller inputs will stop updating, so the last readings will remain in effect.  It is
     good practice to only act upon inputs if the controller is connected.  For instance, for
     a robot, stop all motors if "not connected()".
-    
     An inital controller input, stick movement or button press, may be required before the connection
     status goes True.  If a connection is lost, the connection will resume automatically when the
     fault is corrected.
@@ -151,22 +140,22 @@ class Joystick:
     def dpadUp(self):
         self.refresh()
         return int(self.reading[45:46])
-        
+
     # Dpad Down status - returns 1 (pressed) or 0 (not pressed)
     def dpadDown(self):
         self.refresh()
         return int(self.reading[50:51])
-        
+
     # Dpad Left status - returns 1 (pressed) or 0 (not pressed)
     def dpadLeft(self):
         self.refresh()
         return int(self.reading[55:56])
-        
+
     # Dpad Right status - returns 1 (pressed) or 0 (not pressed)
     def dpadRight(self):
         self.refresh()
         return int(self.reading[60:61])
-        
+
     # Back button status - returns 1 (pressed) or 0 (not pressed)
     def Back(self):
         self.refresh()
@@ -196,7 +185,7 @@ class Joystick:
     def A(self):
         self.refresh()
         return int(self.reading[100:101])
-        
+
     # B button status - returns 1 (pressed) or 0 (not pressed)
     def B(self):
         self.refresh()
@@ -226,7 +215,7 @@ class Joystick:
     def leftTrigger(self):
         self.refresh()
         return int(self.reading[129:132]) / 255.0
-        
+
     # Right trigger value scaled between 0.0 to 1.0
     def rightTrigger(self):
         self.refresh()
@@ -241,7 +230,7 @@ class Joystick:
 
     # Returns tuple containing X and Y axis values for Right stick scaled between -1.0 to 1.0
     # Usage:
-    #     x,y = joy.rightStick() 
+    #     x,y = joy.rightStick()
     def rightStick(self,deadzone=4000):
         self.refresh()
         return (self.rightX(deadzone),self.rightY(deadzone))
