@@ -120,7 +120,10 @@ Open the windows power shell by right clicking the start menu. The CMD terminal 
 ![image](https://user-images.githubusercontent.com/31364456/118205380-1421bb80-b415-11eb-9fce-3b3506655a74.png)
 
 Navigate to the ```ROV_control-host.py``` script directory using ``cd``. So for example if you downloaded the script file into the documents folder of Windows, navigating to the directory would be: ``` cd c:\users\username\documents ```
+*Note: Don't add the script file i.e ROV_Control-host.py to the directory. That tells Windows Power Shell to navigate to that file not the directory*
 
+
+Windows Power Shell should show once you are in the directory.
 Run the script using: ```py ROV_control-host.py```
 
 Stop the script by either exiting the pygames window or pressing Ctrl+C on the terminal. Please allow the program to run its termination function when shut down has started. 
