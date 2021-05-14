@@ -109,6 +109,24 @@ The arm() function in the python code should take care of all the ESC calibratio
 
 Refer to the manufacture's website for specifications: http://www.ztwshop.com/product/shark-brushless-esc-for-rc-boat/ztw-shark-40A-bec-for-rc-boat.html
 
+## Running the Python Script:
+Once the host computer and the RPi have been initialized, the next step to running the control software is to run the python script.
+Ensure that python has been properly installed on the host computer by running ```pip list ``` and checking that the ***gpiozero, pigpio, pygame*** modules have been installed. 
+
+The important script is the ```ROV_control-host.py``` so download that into your desired directory. Take note of the path of this directory.
+
+Open the windows power shell by right clicking the start menu. The CMD terminal can also work but the power shell is more powerful and easier to use.
+
+![image](https://user-images.githubusercontent.com/31364456/118205380-1421bb80-b415-11eb-9fce-3b3506655a74.png)
+
+Navigate to the ```ROV_control-host.py``` script directory using ``cd``. So for example if you downloaded the script file into the documents folder of Windows, navigating to the directory would be: ``` cd c:\users\username\documents ```
+
+Run the script using: ```py ROV_control-host.py```
+
+Stop the script by either exiting the pygames window or pressing Ctrl+C on the terminal. Please allow the program to run its termination function when shut down has started. 
+
+
+
 
 ## Deprecated
 Functions or drivers that are no longer used but kept for completeness or troubleshooting.
