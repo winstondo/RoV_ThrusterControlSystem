@@ -241,13 +241,14 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
                 #axis = joystick.get_axis(i)
                 #textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis,))
             
+            trigger_coeff = 1.0
             #axis designation block
-            flJoyLeftX = joystick.get_axis(0)
-            flJoyLeftY =  -1*joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
+            flJoyLeftX = -1*joystick.get_axis(0)
+            flJoyLeftY =  joystick.get_axis(1) #pygames returns the Y axis on the joysticks as inverted for a stupid reason
             flJoyRightX = joystick.get_axis(2)
             flJoyRightY = -1*joystick.get_axis(3) #pygames returns the Y axis on the joysticks as inverted because stupid 
-            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4), 0.0, 1.0, -1.0, 1.0) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
-            flRightTrigger = MinMaxNormalization(joystick.get_axis(5), 0.0, 1.0, -1.0, 1.0) #should correct trigger values to ranges [0,1] unless a button is pressed then the thing over normalizes
+            flLeftTrigger = MinMaxNormalization(joystick.get_axis(4)*trigger_coeff, 0.0, 1.0, -1.0, 1.0) #pygames has the triggers between [-1,1] with the 0 outputing only if the trigger is squeezed half way.
+            flRightTrigger = MinMaxNormalization(joystick.get_axis(5)* trigger_coeff, 0.0, 1.0, -1.0, 1.0) #should correct trigger values to ranges [0,1] unless a button is pressed then the thing over normalizes
             
 
             textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
@@ -354,7 +355,21 @@ def ConnectToNetworkGPIO(hostname, MIN_PW, MAX_PW, iFrontTPin, iBackTPin, iLeftT
     return thrusters
 
 
-if __name__ == "__main__":
+#used to test different arming fucntions that use concurrency
+def debugArm():
+    x = 0
+    x = input("Enter which arming mode to use\n 0 - serial arming \n 1 - multithreaded arming\n 2 - multiprocess arming " )
+    x = int(x)
+    if (x == 0):
+        arm(ARMING_INTERVAL, THRUSTERS)
+    elif (x == 1):
+        armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
+    elif (x == 2):
+        armMultiProcess(ARMING_INTERVAL, THRUSTERS)
+    else:
+        arm(ARMING_INTERVAL, THRUSTERS)
+
+def main():
     #config variables
 
     # Color scheme for UI window
@@ -372,13 +387,12 @@ if __name__ == "__main__":
 
 
     #=======================================================
-    THRUSTERS = ConnectToNetworkGPIO("raspberrypi", MIN_PW, MAX_PW, 17, 27, 22, 23)
+    THRUSTERS = ConnectToNetworkGPIO("raspberrypi", MIN_PW, MAX_PW, 17, 27, 22, 23) #F,B,L,R
 
     
     try:
         
-        #arm(ARMING_INTERVAL, THRUSTERS)
-        #armMultiProcess(ARMING_INTERVAL, THRUSTERS)
+       
         armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
         MainControlLoop(60, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
         ShutDown(THRUSTERS)
@@ -387,3 +401,5 @@ if __name__ == "__main__":
         print("program inturrupted... exiting")
         ShutDown(THRUSTERS)
    
+
+if __name__ == "__main__":
