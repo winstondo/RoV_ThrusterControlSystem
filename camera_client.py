@@ -11,10 +11,10 @@ client_socket.connect((sys.argv[1], int(sys.argv[2])))
 connection = client_socket.makefile('wb')
 try:
     with picamera.PiCamera() as camera:
-        camera.resolution = (640, 480)
+        camera.resolution = (1080, 1980)
         print("starting Camera...........")
         time.sleep(2)
-        stream = io.BytesIO()        
+        stream = io.BytesIO()
         for foo in camera.capture_continuous(stream, 'jpeg'):
             connection.write(struct.pack('<L', stream.tell()))
             connection.flush()
