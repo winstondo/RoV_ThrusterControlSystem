@@ -11,10 +11,14 @@ If the initialization process has not been performed for both the host machine a
 Once the host computer and the RPi have been initialized, the next step to running the control software is to run the python script.
 Ensure that python has been properly installed on the host computer by running ```pip list ``` and checking that the ***gpiozero, pigpio, pygame*** modules have been installed. 
 
-Main file is ```main_host.py``` which should be run on the host computer. This script is dependant on two modules:
+Main file is ```main_host.py``` which should be run on the host computer. This script is dependant on two modules and one ini configuration file:
 
 - ROV_Control_Host.py
 - camera_server.py
+- config.ini
+
+The rest are test scripts for the various components.
+
 
 Instructions to prepare the RPi and the host computer are detailed below. 
 
