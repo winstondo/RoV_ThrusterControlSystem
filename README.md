@@ -1,34 +1,74 @@
-## Patch 2.1.1:
+
+# RoV_ThrusterControlSystem
+This repo contains all the relevent software to control the Underwater ROV as well as use the camera. 
+It also has instructions to initilize both the a new Raspberry Pi (RPi) and the controling host computer, which should be a Windows 10 machine.
+
+
+## Normal Operation:
+If the initialization process has not been performed for both the host machine and the RPi, please look at the *Initilization* secion. 
+
+
+Once the host computer and the RPi have been initialized, the next step to running the control software is to run the python script.
+Ensure that python has been properly installed on the host computer by running ```pip list ``` and checking that the ***gpiozero, pigpio, pygame*** modules have been installed. 
+
+Main file is ```main_host.py``` which should be run on the host computer. This script is dependant on two modules:
+
+- ROV_Control_Host.py
+- camera_server.py
+
+Instructions to prepare the RPi and the host computer are detailed below. 
+
+The important script is the ```main_host.py``` so download that into your desired directory. Take note of the path of this directory.
+
+Open the windows power shell by right clicking the start menu. The CMD terminal can also work but the power shell is more powerful and easier to use.
+
+![image](https://user-images.githubusercontent.com/31364456/118205380-1421bb80-b415-11eb-9fce-3b3506655a74.png)
+
+Navigate to the ```main_host.py``` script directory using ``cd``. So for example if you downloaded the script file into the documents folder of Windows, navigating to the directory would be: ``` cd c:\users\username\documents ```
+*Note: Don't add the script file i.e ROV_Control-host.py to the directory. That tells Windows Power Shell to navigate to that file not the directory*
+
+
+Windows Power Shell should show where you are in the directory.
+Run the script using: ```py main_host.py```
+
+Stop the script by either exiting the pygames window or pressing Ctrl+C on the terminal. Please allow the program to run its termination function when shut down has started. 
+
+### Configuration File
+Use the ```config.ini``` file to change any necessary settings for the control software such as the RPi host name and the GPIO pins for thrusters. 
+Values should be self explantory.
+
+
+## Changelog:
+
+### Patch 2.2:
+- Added wrapper script to run both the camera and thruster control programs
+- Added multithreaded arming function
+- Added user configuration file
+
+### Patch 2.1.1:
 - ~~Corrected ASCEND and DESCEND control issues: thursters will correctly fire at full when triggers are fully depressed~~ 
-- Reverted: controller corrects deadzone once a random button has been preseed. Right trigger still does not function correctly. Adjust the minmax bounds.
+- Reverted: controller corrects deadzone once a random button has been pressed. Right trigger still does not function correctly. Adjust the minmax bounds.
 
 
-## Patch 2.1:
+### Patch 2.1:
 - Corrected thruster control logic
 - Remote GPIO connection scheme to its own function
 
 
-## Patch 2.0:
+### Patch 2.0:
 - Implemented new controller API: pygames. Allows Windows host computer to interpret controller input as well as drawing a diagnostic UI.
 - Implemented GPIOZero for remote GPIO. Allows the host computer to control the RPis GPIO remotely. 
 - Improved thruster software logic should iron out dead zone issues.
 
-## Patch 1.0:
+### Patch 1.0:
 - Added analog trigger control over thrusters. RT should fire both dorsal thrusters forward to have the ROV accend. LT should cause the craft to decend.
 
 ## To Do:
-
  - Fix UI. 
  - Fix triggers.
+ - Fix abilty to control the UI color scheme with config.ini values.
+ - Integrate camera and update readme for camera.
 
-
-# RoV_ThrusterControlSystem
-
-~~main file is now rov_control_GPIO.~~ 
-
-main file is rov_control-Host which should be run on the host computer. Instructions to prepare the RPi and the host computer are detailed below. 
-
-Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
 
 ## Initialization:
 
@@ -60,6 +100,7 @@ pip list
 ### Raspberry PI:
 Enable I2C, Remote GPIO in the settings.
 
+Software uses pigpio libary for more accurate pulse width modulation (PWM) to control the ESC and brushless motors.
 Ensure the pigpio library is installed:
 ```
 sudo apt-get install pigpio python-pigpio python3-pigpio
@@ -109,24 +150,7 @@ The arm() function in the python code should take care of all the ESC calibratio
 
 Refer to the manufacture's website for specifications: http://www.ztwshop.com/product/shark-brushless-esc-for-rc-boat/ztw-shark-40A-bec-for-rc-boat.html
 
-## Running the Python Script:
-Once the host computer and the RPi have been initialized, the next step to running the control software is to run the python script.
-Ensure that python has been properly installed on the host computer by running ```pip list ``` and checking that the ***gpiozero, pigpio, pygame*** modules have been installed. 
 
-The important script is the ```ROV_control-host.py``` so download that into your desired directory. Take note of the path of this directory.
-
-Open the windows power shell by right clicking the start menu. The CMD terminal can also work but the power shell is more powerful and easier to use.
-
-![image](https://user-images.githubusercontent.com/31364456/118205380-1421bb80-b415-11eb-9fce-3b3506655a74.png)
-
-Navigate to the ```ROV_control-host.py``` script directory using ``cd``. So for example if you downloaded the script file into the documents folder of Windows, navigating to the directory would be: ``` cd c:\users\username\documents ```
-*Note: Don't add the script file i.e ROV_Control-host.py to the directory. That tells Windows Power Shell to navigate to that file not the directory*
-
-
-Windows Power Shell should show once you are in the directory.
-Run the script using: ```py ROV_control-host.py```
-
-Stop the script by either exiting the pygames window or pressing Ctrl+C on the terminal. Please allow the program to run its termination function when shut down has started. 
 
 
 

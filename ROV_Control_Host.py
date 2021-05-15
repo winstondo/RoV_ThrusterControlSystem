@@ -1,7 +1,8 @@
 #ROV Team K
 #Winston Do
 
-#program disc: this should be run on the host computer. it interprets input from the xbox controller and controls the ROV through the ethernet cable
+#program disc: this should be on the host computer with the same directory as the camera control script. It does NOT need to be run directly, unless for testing.
+#It interprets input from the xbox controller and controls the ROV through the ethernet cable
 #UI partially based on https://www.pygame.org/docs/ref/joystick.html
 
 import pygame 
@@ -69,7 +70,7 @@ def CountSleep(seconds):
 #input:(arming_interval) time the arming function waits between oscillating between the thrusters neutral and max pulse width for ESC calibration
 #input: (thrusters) dictionary of all thruster objects of the Servo class, each identified by keys ("Front","Left", etc)
 #output: none
-def arm(arming_interval, thrusters):
+def armSerial(arming_interval, thrusters):
     for thruster in thrusters.values():    
         print("initilizing:{} at MAX_PW".format(thruster))
         #thruster.max()
@@ -369,32 +370,57 @@ def debugArm():
     else:
         arm(ARMING_INTERVAL, THRUSTERS)
 
-def main():
-    #config variables
+def main(config):
 
-    # Color scheme for UI window
+    #config variables
+    UPDATE_SPEED = config.getint('MAIN','UPDATE_SPEED', fallback=60)
+    USE_MULTITHREADED_ARM = config.getboolean('MAIN', 'USE_MULTITHREADED_ARM', fallback=False)
+  
+    #host
+    HOST = config.get('RASPBERRYPI', 'HOST', fallback='raspberrypi')
+
+    #ui
+
+    #SCREEN_BACKGROUND_COLOR = pygame.Color(config.get('UI', 'SCREEN_BACKGROUND_COLOR', fallback='black'))
+    #FONT_COLOR = pygame.Color(config.get('UI', 'FONT_COLOR', fallback='white'))
+    WINDOW_HEIGHT = config.getint('UI', 'WINDOW_HEIGHT', fallback=600)
+    WINDOW_WIDTH = config.getint('UI', 'WINDOW_WIDTH', fallback=600)
+
+    #Pulse Width (units in s)
+    MAX_PW = config.getfloat('THRUSTERCONFIG','MAX_PW', fallback=2E-3)
+
+    MIN_PW = config.getfloat('THRUSTERCONFIG','MIN_PW', fallback=1E-3)
+    ARMING_INTERVAL = config.getint('THRUSTERCONFIG','ARMING_INTERVAL', fallback=2)
+    #thruster pins
+    FRONT_THRUSTER_PIN = config.getint('THRUSTERCONFIG','FRONT_THRUSTER_PIN', fallback=17)
+    BACK_THRUSTER_PIN = config.getint('THRUSTERCONFIG','BACK_THRUSTER_PIN', fallback=27)
+    LEFT_THRUSTER_PIN = config.getint('THRUSTERCONFIG','LEFT_THRUSTER_PIN', fallback=22)
+    RIGHT_THRUSTER_PIN = config.getint('THRUSTERCONFIG','RIGHT_THRUSTER_PIN', fallback=23)
+
     SCREEN_BACKGROUND_COLOR = pygame.Color('black')
     FONT_COLOR = pygame.Color('white')
     #UI window dimentions in pixels
-    WINDOW_HEIGHT = 600
-    WINDOW_WIDTH = 600
+    #WINDOW_HEIGHT = 600
+    #WINDOW_WIDTH = 600
     #Pulse Width (units in s)
-    MAX_PW = 2E-3
-    MIN_PW = 1E-3 
+    #MAX_PW = 2E-3
+    #MIN_PW = 1E-3 
     #FRAME_WIDTH = 20E-3   #The length of time between servo control pulses measured in seconds. Using defaults of 20ms which is a common value for servos.
     #NEUTRAL_THROTTLE = 1500 #pulse widths lower than this value will have the thruster fire in reverse
-    ARMING_INTERVAL = 2 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
+    #ARMING_INTERVAL = 2 #minimum ammount of time the arming function waits between oscillating the throttles to arm the ESCs
 
 
     #=======================================================
-    THRUSTERS = ConnectToNetworkGPIO("raspberrypi", MIN_PW, MAX_PW, 17, 27, 22, 23) #F,B,L,R
-
+    #THRUSTERS = ConnectToNetworkGPIO("raspberrypi", MIN_PW, MAX_PW, FRONT_THRUSTER_PIN, BACK_THRUSTER_PIN, LEFT_THRUSTER_PIN, RIGHT_THRUSTER_PIN) 
+    THRUSTERS = ConnectToNetworkGPIO(HOST, MIN_PW, MAX_PW, FRONT_THRUSTER_PIN, BACK_THRUSTER_PIN, LEFT_THRUSTER_PIN, RIGHT_THRUSTER_PIN) 
     
     try:
-        
-       
-        armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
-        MainControlLoop(60, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
+        print("Starting Control Program")
+        if (USE_MULTITHREADED_ARM):       
+            armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
+        else:
+            armSerial(ARMING_INTERVAL, THRUSTERS)
+        MainControlLoop(UPDATE_SPEED, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
         ShutDown(THRUSTERS)
 
     except KeyboardInterrupt:
@@ -403,3 +429,4 @@ def main():
    
 
 if __name__ == "__main__":
+    main()
