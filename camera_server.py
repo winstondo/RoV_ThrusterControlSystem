@@ -1,18 +1,19 @@
-import io
-import socket
-import struct
-from PIL import Image
-import cv2
-import numpy
-import sys
 
-server_socket = socket.socket()
-server_socket.bind((sys.argv[1], int(sys.argv[2])))  
-server_socket.listen(0)
-print("Listening")
-connection = server_socket.accept()[0].makefile('rb')
 
 def main(): 
+    import io
+    import socket
+    import struct
+    from PIL import Image
+    import cv2
+    import numpy
+    import sys
+
+    server_socket = socket.socket()
+    server_socket.bind((sys.argv[1], int(sys.argv[2])))  
+    server_socket.listen(0)
+    print("Listening")
+    connection = server_socket.accept()[0].makefile('rb')
     try:
     img = None
     while True:

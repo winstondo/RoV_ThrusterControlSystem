@@ -1,16 +1,17 @@
-import io
-import socket
-import struct
-import time
-import picamera
-import sys
-
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((sys.argv[1], int(sys.argv[2])))
-
-connection = client_socket.makefile('wb')
 
 def main(): 
+    import io
+    import socket
+    import struct
+    import time
+    import picamera
+    import sys
+
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((sys.argv[1], int(sys.argv[2])))
+
+    connection = client_socket.makefile('wb')
+
     try:
     with picamera.PiCamera() as camera:
         camera.resolution = (1080, 1980)
