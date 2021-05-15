@@ -9,7 +9,9 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((sys.argv[1], int(sys.argv[2])))
 
 connection = client_socket.makefile('wb')
-try:
+
+def main(): 
+    try:
     with picamera.PiCamera() as camera:
         camera.resolution = (1080, 1980)
         print("starting Camera...........")
@@ -21,7 +23,11 @@ try:
             stream.seek(0)
             connection.write(stream.read())
             stream.seek(0)
-            stream.truncate()
-finally:
-    connection.close()
-    client_socket.close()
+            stream.truncate()\
+    finally:
+        connection.close()
+        client_socket.close()
+
+
+if __name__ == "__main__":
+    main()

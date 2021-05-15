@@ -11,7 +11,9 @@ server_socket.bind((sys.argv[1], int(sys.argv[2])))
 server_socket.listen(0)
 print("Listening")
 connection = server_socket.accept()[0].makefile('rb')
-try:
+
+def main(): 
+    try:
     img = None
     while True:
         image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
@@ -26,6 +28,9 @@ try:
         if cv2.waitKey(1) & 0xFF == ord('q'):
            break
     cv2.destroyAllWindows()
-finally:
-    connection.close()
-    server_socket.close()
+    finally:
+        connection.close()
+        server_socket.close()
+
+if __name__ == "__name__":
+    main()
