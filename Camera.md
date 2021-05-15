@@ -23,3 +23,5 @@ After all requirement are performed, the devices are ready for socket communicat
   2. camera_client.py has to be on raspberrypi --> python camera_client.py SERVER_IP_ADDRESS PORT_NUMBER
 
 NOTE: Server side has to be operational first, then client can be luanched. Additionally, in host computer, ip detection is needed, and in our case, ipconfig was used to find the ip address on the network for the SERVER_IP_ADDRESS
+
+### Futher documentation on other programs will be found in Camera_Doc.pdf with issues and possible soluitons to the problems. 
