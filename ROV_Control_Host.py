@@ -362,19 +362,20 @@ def debugArm():
     x = input("Enter which arming mode to use\n 0 - serial arming \n 1 - multithreaded arming\n 2 - multiprocess arming " )
     x = int(x)
     if (x == 0):
-        arm(ARMING_INTERVAL, THRUSTERS)
+        armSerial(ARMING_INTERVAL, THRUSTERS)
     elif (x == 1):
         armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
     elif (x == 2):
         armMultiProcess(ARMING_INTERVAL, THRUSTERS)
     else:
-        arm(ARMING_INTERVAL, THRUSTERS)
+        armSerial(ARMING_INTERVAL, THRUSTERS)
 
 def main(config):
 
     #config variables
     UPDATE_SPEED = config.getint('MAIN','UPDATE_SPEED', fallback=60)
     USE_MULTITHREADED_ARM = config.getboolean('MAIN', 'USE_MULTITHREADED_ARM', fallback=False)
+    USE_DEBUG_MODE = config.getboolean('MAIN', 'USE_DEBUG_MODE', fallback=True)
   
     #host
     HOST = config.get('RASPBERRYPI', 'HOST', fallback='raspberrypi')
@@ -416,10 +417,13 @@ def main(config):
     
     try:
         print("Starting Control Program")
-        if (USE_MULTITHREADED_ARM):       
-            armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
+        if(not USE_DEBUG_MODE):
+            if (USE_MULTITHREADED_ARM):       
+                armMultiThreaded(ARMING_INTERVAL, THRUSTERS)
+            else:
+                armSerial(ARMING_INTERVAL, THRUSTERS)
         else:
-            armSerial(ARMING_INTERVAL, THRUSTERS)
+            debugArm()
         MainControlLoop(UPDATE_SPEED, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
         ShutDown(THRUSTERS)
 
