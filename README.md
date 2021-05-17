@@ -17,12 +17,14 @@ Main file is ```main_host.py``` which should be run on the host computer. This s
 - camera_server.py
 - config.ini
 
-The rest are test scripts for the various components.
+One script file needs to be on the RPi for the camera to work
+ - camera_client.py
 
+Refer to ```camera.md``` for further instructions setting up the camera.
+
+The rest are test scripts for the various components or deprecated scripts kept for testing.
 
 Instructions to prepare the RPi and the host computer are detailed below. 
-
-The important script is the ```main_host.py``` so download that into your desired directory. Take note of the path of this directory.
 
 Open the windows power shell by right clicking the start menu. The CMD terminal can also work but the power shell is more powerful and easier to use.
 
@@ -44,6 +46,10 @@ Values should be self explantory.
 
 ## Changelog:
 
+### Patch 2.2.1:
+- Added camera control
+- Added debug option and corresponding config setting.
+
 ### Patch 2.2:
 - Added wrapper script to run both the camera and thruster control programs
 - Added multithreaded arming function
@@ -53,11 +59,9 @@ Values should be self explantory.
 - ~~Corrected ASCEND and DESCEND control issues: thursters will correctly fire at full when triggers are fully depressed~~ 
 - Reverted: controller corrects deadzone once a random button has been pressed. Right trigger still does not function correctly. Adjust the minmax bounds.
 
-
 ### Patch 2.1:
 - Corrected thruster control logic
 - Remote GPIO connection scheme to its own function
-
 
 ### Patch 2.0:
 - Implemented new controller API: pygames. Allows Windows host computer to interpret controller input as well as drawing a diagnostic UI.
@@ -75,6 +79,7 @@ Values should be self explantory.
 
 
 ## Initialization:
+This is to initialize the control system on both the Windows 10 host machine and the RPi. To initilize the camera, refer to the camera.md file.
 
 ### Host Computer
 Need to install pigpio, gpiozero and pygames modules.
