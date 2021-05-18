@@ -1,7 +1,7 @@
 def main(config):
     configs = []
     #host
-    CLIENT_NAME = config.get('NETWORKING', 'CLIENT_NAME', fallback='fucking fail')
+    CLIENT_NAME = config.get('NETWORKING', 'CLIENT_NAME', fallback='fail')
     configs.append(CLIENT_NAME)
 
     #thruster pins
