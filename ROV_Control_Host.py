@@ -13,7 +13,6 @@ from multiprocessing import Process #for simultaneous thruster arming
 
 from threading import Thread #not true parralism but the application is I/O bound so concurrancy sho
 
-
 #class definitions
 
 # This is a simple class that will help us print to the screen.
@@ -378,7 +377,7 @@ def main(config):
     USE_DEBUG_MODE = config.getboolean('MAIN', 'USE_DEBUG_MODE', fallback=True)
   
     #host
-    HOST = config.get('RASPBERRYPI', 'HOST', fallback='raspberrypi')
+    CLIENT_NAME = config.get('NETWORKING', 'CLIENT_NAME', fallback='raspberrypi')
 
     #ui
 
@@ -413,7 +412,7 @@ def main(config):
 
     #=======================================================
     #THRUSTERS = ConnectToNetworkGPIO("raspberrypi", MIN_PW, MAX_PW, FRONT_THRUSTER_PIN, BACK_THRUSTER_PIN, LEFT_THRUSTER_PIN, RIGHT_THRUSTER_PIN) 
-    THRUSTERS = ConnectToNetworkGPIO(HOST, MIN_PW, MAX_PW, FRONT_THRUSTER_PIN, BACK_THRUSTER_PIN, LEFT_THRUSTER_PIN, RIGHT_THRUSTER_PIN) 
+    THRUSTERS = ConnectToNetworkGPIO(CLIENT_NAME, MIN_PW, MAX_PW, FRONT_THRUSTER_PIN, BACK_THRUSTER_PIN, LEFT_THRUSTER_PIN, RIGHT_THRUSTER_PIN) 
     
     try:
         print("Starting Control Program")
