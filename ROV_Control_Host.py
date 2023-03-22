@@ -23,7 +23,7 @@ class TextPrint(object):
         self.reset()
         self.font = pygame.font.Font(None, 20)
 
-    def tprint(self, screen, textString):
+    def tprint(self, screen, textString, FONT_COLOR):
         textBitmap = self.font.render(textString, True, FONT_COLOR)
         screen.blit(textBitmap, (self.x, self.y))
         self.y += self.line_height
@@ -157,7 +157,7 @@ def armMultiThreaded(arming_interval, thrusters):
 #input: (WINDOW_HEIGHT, WINDOW_WIDTH) two interger values that tells the main program how large to draw the window
 #input: (thrusters) (thrusters) dictionary of all thruster objects of the Servo class, each identified by keys ("Front","Left", etc)
 #output:none 
-def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
+def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters, SCREEN_BACKGROUND_COLOR, FONT_COLOR):
     
     pygame.init()
 
@@ -203,7 +203,7 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
         # Get count of joysticks.
         joystick_count = pygame.joystick.get_count()
 
-        textPrint.tprint(screen, "Number of joysticks: {}".format(joystick_count))
+        textPrint.tprint(screen, "Number of joysticks: {}".format(joystick_count), FONT_COLOR)
         textPrint.indent()
 
         # For each joystick:
@@ -216,12 +216,12 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             except AttributeError:
                 # get_instance_id() is an SDL2 method
                 jid = joystick.get_id()
-            textPrint.tprint(screen, "Joystick {}".format(jid))
+            textPrint.tprint(screen, "Joystick {}".format(jid), FONT_COLOR)
             textPrint.indent()
 
             # Get the name from the OS for the controller/joystick.
             name = joystick.get_name()
-            textPrint.tprint(screen, "Joystick name: {}".format(name))
+            textPrint.tprint(screen, "Joystick name: {}".format(name), FONT_COLOR)
 
             try:
                 guid = joystick.get_guid()
@@ -229,17 +229,17 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
                 # get_guid() is an SDL2 method
                 pass
             else:
-                textPrint.tprint(screen, "GUID: {}".format(guid))
+                textPrint.tprint(screen, "GUID: {}".format(guid), FONT_COLOR)
 
             # Usually axis run in pairs, up/down for one, and left/right for
             # the other.
             axes = joystick.get_numaxes()
-            textPrint.tprint(screen, "Number of axes: {}".format(axes))
+            textPrint.tprint(screen, "Number of axes: {}".format(axes), FONT_COLOR)
             textPrint.indent()
 
             #for i in range(axes):
                 #axis = joystick.get_axis(i)
-                #textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis,))
+                #textPrint.tprint(screen, "Axis {} value: {:>6.3f}".format(i, axis,), FONT_COLOR)
             
             trigger_coeff = 1.0
             #axis designation block
@@ -251,12 +251,12 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             flRightTrigger = MinMaxNormalization(joystick.get_axis(5)* trigger_coeff, 0.0, 1.0, -1.0, 1.0) #should correct trigger values to ranges [0,1] unless a button is pressed then the thing over normalizes
             
 
-            textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX))
-            textPrint.tprint(screen, "JoyLeftY is value: {:>6.3f}".format(flJoyLeftY))
-            textPrint.tprint(screen, "JoyRightX is value: {:>6.3f}".format(flJoyRightX))
-            textPrint.tprint(screen, "JoyRightY is value: {:>6.3f}".format(flJoyRightY))
-            textPrint.tprint(screen, "LeftTrigger is value: {:>6.3f}".format(flLeftTrigger))
-            textPrint.tprint(screen, "RightTrigger is value: {:>6.3f}".format(flRightTrigger))
+            textPrint.tprint(screen, "JoyLeftX is value: {:>6.3f}".format(flJoyLeftX), FONT_COLOR)
+            textPrint.tprint(screen, "JoyLeftY is value: {:>6.3f}".format(flJoyLeftY), FONT_COLOR)
+            textPrint.tprint(screen, "JoyRightX is value: {:>6.3f}".format(flJoyRightX), FONT_COLOR)
+            textPrint.tprint(screen, "JoyRightY is value: {:>6.3f}".format(flJoyRightY), FONT_COLOR)
+            textPrint.tprint(screen, "LeftTrigger is value: {:>6.3f}".format(flLeftTrigger), FONT_COLOR)
+            textPrint.tprint(screen, "RightTrigger is value: {:>6.3f}".format(flRightTrigger), FONT_COLOR)
             textPrint.unindent()
             textPrint.indent()
             #somewhat inelegant, can be improved
@@ -270,8 +270,8 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             thrusters["Left"].value = lThrust_val
             thrusters["Right"].value = -1*rThrust_val
 
-            textPrint.tprint(screen, "{:>6.3f} input -> LeftThruster with PULSE WIDTH: {:>6.5f}".format(-1*lThrust_val, thrusters["Left"].pulse_width))
-            textPrint.tprint(screen, "{:>6.3f} input -> RightThruster with PULSE WIDTH: {:>6.5f}".format(rThrust_val, thrusters["Right"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} input -> LeftThruster with PULSE WIDTH: {:>6.5f}".format(-1*lThrust_val, thrusters["Left"].pulse_width), FONT_COLOR)
+            textPrint.tprint(screen, "{:>6.3f} input -> RightThruster with PULSE WIDTH: {:>6.5f}".format(rThrust_val, thrusters["Right"].pulse_width), FONT_COLOR)
 
             
             fwrd_val = flRightTrigger
@@ -284,30 +284,30 @@ def MainControlLoop(UPS, WINDOW_HEIGHT, WINDOW_WIDTH, thrusters):
             thrusters["Front"].value = bck_val
             thrusters["Back"].value = -1 * bck_val
 
-            textPrint.tprint(screen, "{:>6.3f} -> FrontThruster with PULSE WIDTH: {:>6.3f}".format(fwrd_val, thrusters["Front"].pulse_width))
-            textPrint.tprint(screen, "{:>6.3f} -> BackThruster with PULSE WIDTH: {:>6.3f}".format(bck_val, thrusters["Back"].pulse_width))
+            textPrint.tprint(screen, "{:>6.3f} -> FrontThruster with PULSE WIDTH: {:>6.3f}".format(fwrd_val, thrusters["Front"].pulse_width), FONT_COLOR)
+            textPrint.tprint(screen, "{:>6.3f} -> BackThruster with PULSE WIDTH: {:>6.3f}".format(bck_val, thrusters["Back"].pulse_width), FONT_COLOR)
 
             textPrint.unindent()
 
             buttons = joystick.get_numbuttons()
-            textPrint.tprint(screen, "Number of buttons: {}".format(buttons))
+            textPrint.tprint(screen, "Number of buttons: {}".format(buttons), FONT_COLOR)
             textPrint.indent()
 
             for i in range(buttons):
                 button = joystick.get_button(i)
                 textPrint.tprint(screen,
-                                 "Button {:>2} value: {}".format(i, button))
+                                 "Button {:>2} value: {}".format(i, button), FONT_COLOR)
             textPrint.unindent()
 
             hats = joystick.get_numhats()
-            textPrint.tprint(screen, "Number of hats: {}".format(hats))
+            textPrint.tprint(screen, "Number of hats: {}".format(hats), FONT_COLOR)
             textPrint.indent()
 
             # Hat position. All or nothing for direction, not a float like
             # get_axis(). Position is a tuple of int values (x, y).
             for i in range(hats):
                 hat = joystick.get_hat(i)
-                textPrint.tprint(screen, "Hat {} value: {}".format(i, str(hat)))
+                textPrint.tprint(screen, "Hat {} value: {}".format(i, str(hat)), FONT_COLOR)
             textPrint.unindent()
 
             textPrint.unindent()
@@ -356,7 +356,7 @@ def ConnectToNetworkGPIO(hostname, MIN_PW, MAX_PW, iFrontTPin, iBackTPin, iLeftT
 
 
 #used to test different arming fucntions that use concurrency
-def debugArm():
+def debugArm(ARMING_INTERVAL, THRUSTERS):
     x = 0
     x = input("Enter which arming mode to use\n 0 - serial arming \n 1 - multithreaded arming\n 2 - multiprocess arming " )
     x = int(x)
@@ -381,8 +381,8 @@ def main(config):
 
     #ui
 
-    #SCREEN_BACKGROUND_COLOR = pygame.Color(config.get('UI', 'SCREEN_BACKGROUND_COLOR', fallback='black'))
-    #FONT_COLOR = pygame.Color(config.get('UI', 'FONT_COLOR', fallback='white'))
+    SCREEN_BACKGROUND_COLOR = pygame.Color(config.get('UI', 'SCREEN_BACKGROUND_COLOR', fallback='black'))
+    FONT_COLOR = pygame.Color(config.get('UI', 'FONT_COLOR', fallback='white'))
     WINDOW_HEIGHT = config.getint('UI', 'WINDOW_HEIGHT', fallback=600)
     WINDOW_WIDTH = config.getint('UI', 'WINDOW_WIDTH', fallback=600)
 
@@ -397,8 +397,8 @@ def main(config):
     LEFT_THRUSTER_PIN = config.getint('THRUSTERCONFIG','LEFT_THRUSTER_PIN', fallback=22)
     RIGHT_THRUSTER_PIN = config.getint('THRUSTERCONFIG','RIGHT_THRUSTER_PIN', fallback=23)
 
-    SCREEN_BACKGROUND_COLOR = pygame.Color('black')
-    FONT_COLOR = pygame.Color('white')
+    #SCREEN_BACKGROUND_COLOR = pygame.Color('black')
+    #FONT_COLOR = pygame.Color('white')
     #UI window dimentions in pixels
     #WINDOW_HEIGHT = 600
     #WINDOW_WIDTH = 600
@@ -422,8 +422,8 @@ def main(config):
             else:
                 armSerial(ARMING_INTERVAL, THRUSTERS)
         else:
-            debugArm()
-        MainControlLoop(UPDATE_SPEED, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS)
+            debugArm(ARMING_INTERVAL, THRUSTERS)
+        MainControlLoop(UPDATE_SPEED, WINDOW_HEIGHT, WINDOW_WIDTH, THRUSTERS, SCREEN_BACKGROUND_COLOR, FONT_COLOR)
         ShutDown(THRUSTERS)
 
     except KeyboardInterrupt:
